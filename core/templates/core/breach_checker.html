@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Email Breach Checker</title>
+  </head>
+  <body>
+    <h1>Email Breach Checker</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      <label for="email">Email address:</label>
+      <input type="email" id="email" name="email" required />
+      <button type="submit">Check</button>
+    </form>
+
+    {% if email %}
+      <h2>Results for {{ email }}</h2>
+      {% if breaches is None %}
+        <p>Service unavailable – please try again later.</p>
+      {% elif breaches|length == 0 %}
+        <p>No known breaches found.</p>
+      {% else %}
+        <ul>
+          {% for breach in breaches %}
+            <li>{{ breach.Name }} – {{ breach.Domain }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endif %}
+
+    <p><a href="{% url 'core:home' %}">Back to home</a></p>
+  </body>
+</html>

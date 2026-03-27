@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ quiz.title }}</title>
+    <style>body{font-family:Arial;max-width:700px;margin:50px auto;}</style>
+</head>
+<body>
+    <h1>{{ quiz.title }}</h1>
+    <p>{{ quiz.description }}</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+            <div style="border:1px solid #eee;padding:20px;margin:20px 0;border-radius:8px;">
+                <h3>{{ question.text }}</h3>
+                {% for answer in question.answers.all %}
+                    <label style="display:block;margin:10px 0;">
+                        <input type="radio" name="q_{{ question.id }}" value="{{ answer.id }}" required>
+                        {{ answer.text }}
+                    </label>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" style="background:#28a745;color:white;padding:15px 30px;border:none;border-radius:5px;font-size:16px;">Submit Quiz</button>
+    </form>
+    
+    <a href="{% url 'core:quiz_list' %}">← Back to Quizzes</a>
+</body>
+</html>

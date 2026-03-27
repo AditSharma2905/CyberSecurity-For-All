@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quizzes</title>
+    <style>body{font-family:Arial;max-width:800px;margin:50px auto;}</style>
+</head>
+<body>
+    <h1>🧠 Cyber Security Quizzes</h1>
+    
+    <nav>
+        <a href="{% url 'core:home' %}">Home</a> | 
+        <a href="{% url 'core:chatbot' %}">Chatbot</a> | 
+        <a href="{% url 'core:breach_checker' %}">Breach Checker</a>
+    </nav>
+    
+    {% if quizzes %}
+        {% for quiz in quizzes %}
+            <div style="border:1px solid #ddd;padding:20px;margin:20px 0;">
+                <h3>{{ quiz.title }}</h3>
+                <p>{{ quiz.description }}</p>
+                <a href="{% url 'core:take_quiz' quiz.id %}" class="btn">Start Quiz ({{ quiz.question_count }} questions)</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No quizzes yet. <a href="/admin/">Create some in admin</a></p>
+    {% endif %}
+    
+    <style>
+        .btn {background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;}
+        .btn:hover {background:#0056b3;}
+    </style>
+</body>
+</html>

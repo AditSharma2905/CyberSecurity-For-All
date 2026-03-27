@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <style>body{font-family:Arial;max-width:800px;margin:50px auto;}</style>
+</head>
+<body>
+    <h1>Quiz Results</h1>
+    
+    <div style="text-align:center;padding:30px;border-radius:10px;margin:20px 0;">
+        {% if attempt.score >= attempt.total_questions|floatformat:0 * 0.7 %}
+            <h2 style="color:#28a745;">🎉 {{ attempt.score }} / {{ attempt.total_questions }} ({{ attempt.score|floatformat:0 }}%)</h2>
+            <p>Excellent! Great cybersecurity knowledge!</p>
+        {% else %}
+            <h2 style="color:#dc3545;">{{ attempt.score }} / {{ attempt.total_questions }} ({{ attempt.score|floatformat:0 }}%)</h2>
+            <p>Good effort! Practice more with the chatbot.</p>
+        {% endif %}
+    </div>
+    
+    <h3>Detailed Feedback:</h3>
+    {% for answer in attempt.answers.select_related.all %}
+        <div style="border-left:4px solid {{ 'green' if answer.is_correct else 'red' }};padding:15px;margin:15px 0;background:#f8f9fa;">
+            <h4>{{ answer.question.text }}</h4>
+            {% if answer.is_correct %}
+                <p><strong>✅ Correct!</strong></p>
+            {% else %}
+                <p><strong>❌ The correct answer was:</strong> {{ answer.question.answers.filter(is_correct=True).first.text }}</p>
+            {% endif %}
+            {% if answer.question.explanation %}
+                <p><em>{{ answer.question.explanation }}</em></p>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <a href="{% url 'core:quiz_list' %}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Take Another Quiz</a>
+</body>
+</html>

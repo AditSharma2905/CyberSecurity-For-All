@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cyber Security Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        textarea { width: 100%; padding: 10px; font-size: 16px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; font-size: 16px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .answer { background: #f8f9fa; padding: 20px; border-left: 4px solid #007bff; margin-top: 20px; }
+        .question { font-weight: bold; color: #495057; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Cyber Security Chatbot</h1>
+    <p>Ask me anything about cybersecurity! I'm here to help all ages learn safely.</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="question"><strong>Your question:</strong></label><br><br>
+            <textarea id="question" name="question" rows="4" placeholder="e.g., What is phishing? How do I stay safe online?">{{ question }}</textarea>
+        </div>
+        <br>
+        <button type="submit">Ask the Bot</button>
+        <a href="{% url 'core:home' %}"><button type="button">Back to Home</button></a>
+    </form>
+
+    {% if question %}
+        <div class="question">
+            <strong>❓ You asked:</strong> {{ question }}
+        </div>
+    {% endif %}
+
+    {% if answer %}
+        <div class="answer">
+            <strong>🤖 Bot says:</strong><br>
+            {{ answer|linebreaks }}
+        </div>
+    {% endif %}
+</body>
+</html>
