@@ -1,4 +1,4 @@
-# Cyber Security for All 🛡️
+# Cyber Security for All 
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-Backend-092E20.svg?logo=django)](https://www.djangoproject.com/)
@@ -6,20 +6,20 @@
 
 > An accessible, engaging, and educational platform designed to protect vulnerable demographics from evolving cybersecurity threats.
 
-##  Table of Contents
+## Table of Contents
 - [About the Project](#-about-the-project)
 - [Key Features](#-key-features)
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
 - [Team Plato](#-team-plato)
 
-##  About the Project
+## About the Project
 
 Cybersecurity threats—such as phishing emails, scams, and data breaches—pose significant risks to everyday internet users. **Cyber Security for All** is a web application explicitly targeting two disproportionately affected demographics: older adults (50+) and younger users (under 15). 
 
 Developed as part of the COM2042 module at the University of Surrey, this platform aims to bridge the digital literacy gap by providing an accessible, secure, and gamified learning environment.
 
-##  Key Features
+## Key Features
 
 - **Email Breach Checker:** Securely validates if an email address has been compromised using the Have I Been Pwned (HIBP) API (processed strictly in-memory).
 - **AI Cybersecurity Chatbot:** An intelligent assistant powered by the Groq API (Llama 3.3 70B), with automatic failover to Google Gemini, providing cybersecurity guidance in simple, accessible language.
@@ -27,7 +27,7 @@ Developed as part of the COM2042 module at the University of Surrey, this platfo
 - **Education Module:** Contextual, post-quiz explanations detailing the rationale behind correct answers and highlighting real-world threats like phishing.
 - **Privacy First:** Strictly adheres to UK GDPR. Data collection for under-15s is limited to name and email only.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 **Frontend:**
 - HTML5 / CSS3 (Static templates rendered via Django)
@@ -44,7 +44,7 @@ Developed as part of the COM2042 module at the University of Surrey, this platfo
 - GitLab CI/CD Pipeline
 
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.10+
@@ -94,7 +94,7 @@ Developed as part of the COM2042 module at the University of Surrey, this platfo
     python manage.py runserver
     ```
 
-##  Team Plato
+## Team Plato
 
 Developed by a dedicated six-person student group for the University of Surrey.
 
