@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .hibp_client import check_breaches
-from .groq_client import ask_cybersecurity_bot
+from LLM_api import LLM_API
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -33,7 +33,7 @@ def chatbot(request):
     if request.method == "POST":
         question = request.POST.get("question", "").strip()
         if question:
-            answer = ask_cybersecurity_bot(question)
+            answer = LLM_API().get_llm_response(question)
             if not answer:
                 answer = "Sorry, I could not get a response right now. Please try again."
     
@@ -113,7 +113,7 @@ def generate_quiz(request):  # Simple function view
     
     prompt = f'Quiz on "{topic}" for {agegroup}. Return JSON only:\n{{"title":"...", "questions":[...], "description":"..."}}'
     
-    response = ask_cybersecurity_bot(prompt)
+    response = LLM_API().get_llm_response(prompt)
     
     # Safe JSON response
     try:
