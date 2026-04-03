@@ -1,37 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Results</title>
-    <style>body{font-family:Arial;max-width:800px;margin:50px auto;}</style>
-</head>
-<body>
-    <h1>Quiz Results</h1>
-    
-    <div style="text-align:center;padding:30px;border-radius:10px;margin:20px 0;">
-        {% if attempt.score >= attempt.total_questions|floatformat:0 * 0.7 %}
-            <h2 style="color:#28a745;">🎉 {{ attempt.score }} / {{ attempt.total_questions }} ({{ attempt.score|floatformat:0 }}%)</h2>
-            <p>Excellent! Great cybersecurity knowledge!</p>
-        {% else %}
-            <h2 style="color:#dc3545;">{{ attempt.score }} / {{ attempt.total_questions }} ({{ attempt.score|floatformat:0 }}%)</h2>
-            <p>Good effort! Practice more with the chatbot.</p>
+{% extends "core/base.html" %}
+
+{% block title %}Quiz Results{% endblock %}
+{% block nav_quizzes %}navbar__link--active{% endblock %}
+
+{% block content %}
+<div class="container container--narrow page">
+    <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost btn--sm mb-3" style="display:inline-flex;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Quizzes
+    </a>
+
+    {% if percentage >= 70 %}
+    <div class="result-banner result-banner--pass fade-in">
+        <p class="result-banner__score">{{ attempt.score }} / {{ attempt.total_questions }}</p>
+        <p class="result-banner__label">Great job! You scored {{ percentage }}%</p>
+    </div>
+    {% else %}
+    <div class="result-banner result-banner--fail fade-in">
+        <p class="result-banner__score">{{ attempt.score }} / {{ attempt.total_questions }}</p>
+        <p class="result-banner__label">You scored {{ percentage }}% &mdash; keep practising!</p>
+    </div>
+    {% endif %}
+
+    <h2 style="color:var(--text-heading); font-size:1.3em; margin-bottom:20px;">Detailed Feedback</h2>
+
+    {% for answer in attempt.answers.all %}
+    <div class="feedback-item {% if answer.is_correct %}feedback-item--correct{% else %}feedback-item--wrong{% endif %} fade-in">
+        <p class="feedback-item__status">
+            {% if answer.is_correct %}Correct{% else %}Incorrect{% endif %}
+        </p>
+        <p class="feedback-item__question">{{ answer.question.text }}</p>
+
+        {% if not answer.is_correct %}
+        <p class="feedback-item__correct-answer">
+            Your answer: {{ answer.answer.text }}
+        </p>
+        {% endif %}
+
+        {% if answer.question.explanation %}
+        <p class="feedback-item__explanation">{{ answer.question.explanation }}</p>
         {% endif %}
     </div>
-    
-    <h3>Detailed Feedback:</h3>
-    {% for answer in attempt.answers.select_related.all %}
-        <div style="border-left:4px solid {{ 'green' if answer.is_correct else 'red' }};padding:15px;margin:15px 0;background:#f8f9fa;">
-            <h4>{{ answer.question.text }}</h4>
-            {% if answer.is_correct %}
-                <p><strong>✅ Correct!</strong></p>
-            {% else %}
-                <p><strong>❌ The correct answer was:</strong> {{ answer.question.answers.filter(is_correct=True).first.text }}</p>
-            {% endif %}
-            {% if answer.question.explanation %}
-                <p><em>{{ answer.question.explanation }}</em></p>
-            {% endif %}
-        </div>
     {% endfor %}
-    
-    <a href="{% url 'core:quiz_list' %}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Take Another Quiz</a>
-</body>
-</html>
+
+    <div class="mt-4 flex gap-2 flex-wrap">
+        <a href="{% url 'core:take_quiz' attempt.quiz.id %}" class="btn btn--primary">Retry Quiz</a>
+        <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost">Browse Quizzes</a>
+        <a href="{% url 'core:chatbot' %}" class="btn btn--ghost">Ask the Chatbot</a>
+    </div>
+</div>
+{% endblock %}

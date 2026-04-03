@@ -1,147 +1,129 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>✨ Groq Quiz Generator</title>
-    <style>
-        body { font-family: Arial; max-width: 900px; margin: 50px auto; padding: 20px; background: #f8f9fa; }
-        .container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h1 { color: #007bff; text-align: center; margin-bottom: 10px; }
-        .form-group { margin: 25px 0; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
-        input, select, button { width: 100%; padding: 15px; font-size: 16px; border: 2px solid #e9ecef; border-radius: 8px; box-sizing: border-box; }
-        button { background: linear-gradient(45deg, #007bff, #0056b3); color: white; border: none; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,123,255,0.4); }
-        button:disabled { background: #6c757d; cursor: not-allowed; transform: none; }
-        #quiz-output { margin-top: 30px; padding: 25px; background: #e8f5e8; border-radius: 10px; border-left: 5px solid #28a745; }
-        .question { margin: 25px 0; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .answer-correct { background: #d4edda; padding: 10px; border-radius: 5px; margin: 5px 0; }
-        .answer-wrong { background: #f8d7da; padding: 10px; border-radius: 5px; margin: 5px 0; }
-        .loading, .error { text-align: center; padding: 20px; font-size: 18px; }
-        .loading { color: #007bff; }
-        .error { color: #dc3545; background: #f8d7da; border-radius: 8px; }
-        .nav { text-align: center; margin-bottom: 30px; }
-        .nav a { color: #007bff; text-decoration: none; margin: 0 15px; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="nav">
-            <a href="{% url 'core:home' %}">🏠 Home</a> | 
-            <a href="{% url 'core:quiz_list' %}">📚 Quizzes</a> | 
-            <a href="{% url 'core:chatbot' %}">🤖 Chatbot</a>
-        </div>
-        
-        <h1>✨ Groq-Powered Quiz Generator</h1>
-        <p style="text-align: center; color: #666; font-size: 18px;">
-            Enter any cybersecurity topic → <strong>Groq AI generates a complete quiz instantly!</strong>
-        </p>
+{% extends "core/base.html" %}
 
+{% block title %}AI Quiz Generator{% endblock %}
+{% block nav_generate %}navbar__link--active{% endblock %}
+
+{% block content %}
+<div class="container container--narrow page">
+    <div class="page__header">
+        <span class="badge badge--teal mb-2">AI Powered</span>
+        <h1 class="page__title">Generate a Quiz</h1>
+        <p class="page__subtitle">Enter any cyber security topic and our AI will create a quiz for you instantly.</p>
+    </div>
+
+    <div class="card mb-4">
         <form id="quizForm">
             {% csrf_token %}
             <div class="form-group">
-                <label>Topic:</label>
-                <input type="text" id="topic" placeholder="e.g. phishing, SQL injection, password security, XSS" value="phishing awareness" required>
+                <label class="form-label" for="topic">Topic</label>
+                <input
+                    type="text"
+                    class="form-input"
+                    id="topic"
+                    placeholder="e.g. phishing, SQL injection, password security, social engineering"
+                    value="phishing awareness"
+                    required
+                >
             </div>
             <div class="form-group">
-                <label>Audience:</label>
-                <select id="agegroup">
+                <label class="form-label" for="agegroup">Target Audience</label>
+                <select class="form-select" id="agegroup">
                     <option value="beginners">Beginners</option>
                     <option value="advanced">Advanced</option>
-                    <option value="<15">15></option>
-                    <option value=">50">50<</option>
+                    <option value="<15">Under 15</option>
+                    <option value=">50">Over 50</option>
                 </select>
             </div>
-            <button type="submit" id="generateBtn">🚀 Generate Quiz with Groq</button>
-
+            <button type="submit" id="generateBtn" class="btn btn--accent btn--lg btn--full">
+                Generate Quiz
+            </button>
         </form>
-
-        <div id="quiz-output" style="display: none;"></div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('quizForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-            
-                const topic = document.getElementById('topic').value;
-                const ageGroup = document.getElementById('agegroup').value;
-                const btn = document.getElementById('generateBtn');
-                const output = document.getElementById('quiz-output');
-                
-                // Show loading
-                btn.disabled = true;
-                btn.textContent = '🤖 Groq AI thinking...';
-                output.style.display = 'block';
-                output.innerHTML = '<div class="loading">Generating cybersecurity quiz...</div>';
-                
-                try {
-                    const formData = new FormData();
-                    formData.append('topic', topic);
-                    formData.append('agegroup', ageGroup);
-                    
-                    const response = await fetch('/generate-quiz/', {  // Hardcoded URL = no namespace issues
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    });
-                    
-                    const data = await response.json();
-                    
-                    console.log('🧑‍💻 API Response:', data);  // Check browser console (F12)
-                    
-                    if (data.error) {
-                        output.innerHTML = `<div class="error">❌ ${data.error}</div>`;
-                        return;
-                    }
-                    
-                    // Display quiz
-                    const quiz = data.quiz || data;
-                    displayQuiz(quiz);
-                    
-                } catch (error) {
-                    output.innerHTML = `<div class="error">🌐 Network error: ${error.message}</div>`;
-                    console.error('Error:', error);
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = '✨ Generate Quiz with Groq';
+    <div id="quiz-output" style="display:none;"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('quizForm');
+    const btn = document.getElementById('generateBtn');
+    const output = document.getElementById('quiz-output');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const topic = document.getElementById('topic').value;
+        const ageGroup = document.getElementById('agegroup').value;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Generating...';
+        output.style.display = 'block';
+        output.innerHTML = '<div class="card text-center" style="padding:40px;"><span class="spinner" style="width:28px;height:28px;border-width:3px;"></span><p class="text-muted mt-2">AI is creating your quiz...</p></div>';
+
+        try {
+            const formData = new FormData();
+            formData.append('topic', topic);
+            formData.append('agegroup', ageGroup);
+
+            const response = await fetch('/generate-quiz/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             });
-        });
-        
-        function displayQuiz(quiz) {
-            let html = `<h2 style="color: #28a745;">${quiz.title || 'Generated Quiz'}</h2>`;
-            
-            if (quiz.description) html += `<p>${quiz.description}</p>`;
-            
-            if (quiz.questions && Array.isArray(quiz.questions)) {
-                quiz.questions.forEach((q, i) => {
-                    html += `
-                        <div class="question" style="margin: 20px 0;">
-                            <h3 style="color: #007bff;">Q${i+1}: ${q.text || q.question}</h3>
-                    `;
-                    
-                    if (q.answers && Array.isArray(q.answers)) {
-                        q.answers.forEach(ans => {
-                            const correct = ans.correct === true;
-                            html += `
-                                <div class="${correct ? 'answer-correct' : 'answer-wrong'}" style="margin: 5px 0; padding: 10px; border-radius: 5px;">
-                                    ${correct ? '✅' : '❌'} ${ans.text}
-                                </div>
-                            `;
-                        });
-                    }
-                    html += '</div>';
-                });
-            } else {
-                html += `<pre style="white-space: pre-wrap;">${JSON.stringify(quiz, null, 2)}</pre>`;
+
+            const data = await response.json();
+
+            if (data.error) {
+                output.innerHTML = '<div class="alert alert--error">' + data.error + '</div>';
+                return;
             }
-            
-            document.getElementById('quiz-output').innerHTML = html;
+
+            const quiz = data.quiz || data;
+            displayQuiz(quiz);
+
+        } catch (error) {
+            output.innerHTML = '<div class="alert alert--error">Network error: ' + error.message + '</div>';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Generate Quiz';
         }
-        
-        </script>
-        
-</body>
-</html>
+    });
+
+    function displayQuiz(quiz) {
+        let html = '<div class="fade-in">';
+        html += '<h2 style="color:var(--text-heading); font-size:1.5em; margin-bottom:8px;">' + (quiz.title || 'Generated Quiz') + '</h2>';
+
+        if (quiz.description) {
+            html += '<p class="text-muted mb-3">' + quiz.description + '</p>';
+        }
+
+        if (quiz.questions && Array.isArray(quiz.questions)) {
+            quiz.questions.forEach(function (q, i) {
+                html += '<div class="gen-quiz__question">';
+                html += '<h3>Q' + (i + 1) + ': ' + (q.text || q.question) + '</h3>';
+
+                if (q.answers && Array.isArray(q.answers)) {
+                    q.answers.forEach(function (ans) {
+                        const isCorrect = ans.correct === true;
+                        html += '<div class="gen-quiz__answer ' + (isCorrect ? 'gen-quiz__answer--correct' : 'gen-quiz__answer--wrong') + '">';
+                        html += (isCorrect ? '&#10003; ' : '&#10007; ') + ans.text;
+                        html += '</div>';
+                    });
+                }
+
+                html += '</div>';
+            });
+        } else {
+            html += '<div class="card"><pre style="white-space:pre-wrap; color:var(--text-muted);">' + JSON.stringify(quiz, null, 2) + '</pre></div>';
+        }
+
+        html += '</div>';
+        output.innerHTML = html;
+    }
+});
+</script>
+{% endblock %}

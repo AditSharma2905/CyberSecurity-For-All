@@ -1,34 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Email Breach Checker</title>
-  </head>
-  <body>
-    <h1>Email Breach Checker</h1>
+{% extends "core/base.html" %}
 
-    <form method="post">
-      {% csrf_token %}
-      <label for="email">Email address:</label>
-      <input type="email" id="email" name="email" required />
-      <button type="submit">Check</button>
-    </form>
+{% block title %}Breach Checker{% endblock %}
+{% block nav_breach %}navbar__link--active{% endblock %}
+
+{% block content %}
+<div class="container container--narrow page">
+    <div class="page__header">
+        <h1 class="page__title">Breach Checker</h1>
+        <p class="page__subtitle">Check if your email has appeared in any known data breaches using Have I Been Pwned.</p>
+    </div>
+
+    <div class="card mb-4">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" class="form-input" id="email" name="email" placeholder="you@example.com" value="{{ email|default:'' }}" required>
+            </div>
+            <button type="submit" class="btn btn--accent btn--full">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                Check for Breaches
+            </button>
+        </form>
+    </div>
 
     {% if email %}
-      <h2>Results for {{ email }}</h2>
-      {% if breaches is None %}
-        <p>Service unavailable – please try again later.</p>
-      {% elif breaches|length == 0 %}
-        <p>No known breaches found.</p>
-      {% else %}
-        <ul>
-          {% for breach in breaches %}
-            <li>{{ breach.Name }} – {{ breach.Domain }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endif %}
+        {% if breaches is None %}
+            <div class="alert alert--error">Service unavailable &mdash; please try again later.</div>
+        {% elif breaches|length == 0 %}
+            <div class="alert alert--success">
+                <strong>No breaches found!</strong> Your email does not appear in any known data breaches.
+            </div>
+        {% else %}
+            <div class="alert alert--error mb-3">
+                <strong>{{ breaches|length }} breach{{ breaches|length|pluralize:"es" }} found</strong> for {{ email }}
+            </div>
 
-    <p><a href="{% url 'core:home' %}">Back to home</a></p>
-  </body>
-</html>
+            {% for breach in breaches %}
+            <div class="card mb-2" style="padding:18px 22px;">
+                <div class="flex justify-between items-center flex-wrap" style="gap:8px;">
+                    <div>
+                        <p style="color:var(--text-heading); font-weight:600;">{{ breach.Name }}</p>
+                        {% if breach.Domain %}
+                        <p class="text-muted" style="font-size:0.9em;">{{ breach.Domain }}</p>
+                        {% endif %}
+                    </div>
+                    <span class="badge badge--purple">Breached</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

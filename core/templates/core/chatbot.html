@@ -1,43 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Cyber Security Chatbot</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-        textarea { width: 100%; padding: 10px; font-size: 16px; }
-        button { background: #007bff; color: white; padding: 10px 20px; border: none; font-size: 16px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .answer { background: #f8f9fa; padding: 20px; border-left: 4px solid #007bff; margin-top: 20px; }
-        .question { font-weight: bold; color: #495057; }
-    </style>
-</head>
-<body>
-    <h1>🤖 Cyber Security Chatbot</h1>
-    <p>Ask me anything about cybersecurity! I'm here to help all ages learn safely.</p>
-    
-    <form method="post">
-        {% csrf_token %}
-        <div>
-            <label for="question"><strong>Your question:</strong></label><br><br>
-            <textarea id="question" name="question" rows="4" placeholder="e.g., What is phishing? How do I stay safe online?">{{ question }}</textarea>
-        </div>
-        <br>
-        <button type="submit">Ask the Bot</button>
-        <a href="{% url 'core:home' %}"><button type="button">Back to Home</button></a>
-    </form>
+{% extends "core/base.html" %}
 
-    {% if question %}
-        <div class="question">
-            <strong>❓ You asked:</strong> {{ question }}
-        </div>
-    {% endif %}
+{% block title %}AI Chatbot{% endblock %}
+{% block nav_chatbot %}navbar__link--active{% endblock %}
 
-    {% if answer %}
-        <div class="answer">
-            <strong>🤖 Bot says:</strong><br>
+{% block content %}
+<div class="container container--narrow page">
+    <div class="page__header">
+        <h1 class="page__title">AI Chatbot</h1>
+        <p class="page__subtitle">Ask any cyber security question and get a clear, friendly answer powered by AI.</p>
+    </div>
+
+    {% if question and answer %}
+    <div class="chat mb-3">
+        <div class="chat__bubble chat__bubble--user">
+            {{ question }}
+        </div>
+        <div class="chat__bubble chat__bubble--bot">
             {{ answer|linebreaks }}
         </div>
+    </div>
     {% endif %}
-</body>
-</html>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="question">Your Question</label>
+                <textarea
+                    class="form-textarea"
+                    id="question"
+                    name="question"
+                    rows="3"
+                    placeholder="e.g. What is phishing? How do I create a strong password? What should I do if my account is hacked?"
+                    required
+                >{{ question }}</textarea>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn--accent">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    Send Question
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if not question %}
+    <div class="mt-4">
+        <p class="text-muted mb-2" style="font-size:0.9em; font-weight:600;">Try asking about:</p>
+        <div class="grid grid--3" style="gap:10px;">
+            <div class="suggestion-card">
+                <p>What is a phishing email?</p>
+            </div>
+            <div class="suggestion-card">
+                <p>How do I spot a scam website?</p>
+            </div>
+            <div class="suggestion-card">
+                <p>What makes a strong password?</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

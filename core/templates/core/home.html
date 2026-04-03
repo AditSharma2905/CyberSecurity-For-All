@@ -1,129 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSecurity Training Platform - Team Plato</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh; 
-            color: white;
-        }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; margin-bottom: 40px; }
-        h1 { font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .tagline { font-size: 1.3em; opacity: 0.9; margin-bottom: 40px; }
-        
-        .features-grid {
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px; 
-            margin-bottom: 40px;
-        }
-        .feature-card {
-            background: rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px);
-            border-radius: 20px; 
-            padding: 30px; 
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .feature-card:hover {
-            transform: translateY(-10px); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        .feature-icon { 
-            font-size: 4em; 
-            margin-bottom: 20px; 
-            display: block;
-        }
-        .feature-card h3 { font-size: 1.5em; margin-bottom: 15px; }
-        .btn {
-            display: inline-block;
-            background: #00d4aa; 
-            color: #1a1a1a; 
-            padding: 15px 30px; 
-            text-decoration: none; 
-            border-radius: 50px; 
-            font-weight: bold; 
-            font-size: 1.1em;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,212,170,0.4);
-        }
-        .btn:hover { 
-            background: #00b894; 
-            transform: scale(1.05);
-            color: white;
-        }
-        .nav-bar {
-            background: rgba(0,0,0,0.3);
-            padding: 15px 0;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-        .nav-links { text-align: center; }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 25px;
-            margin: 0 10px;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        .nav-links a:hover { background: rgba(255,255,255,0.2); }
-        footer { text-align: center; margin-top: 50px; opacity: 0.8; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Navigation Bar -->
-        <nav class="nav-bar">
-            <div class="nav-links">
-                <a href="{% url 'core:quiz_list' %}">🧠 Quizzes</a>
-                <a href="{% url 'core:chatbot' %}">🤖 AI Chatbot</a>
-                <a href="{% url 'core:breach_checker' %}">🔍 Breach Checker</a>
-                <a href="/admin/">⚙️ Admin</a>
-                <a href="{% url 'core:generate_quiz' %}">✨ Generate Quiz</a>
-            </div>
-        </nav>
+{% extends "core/base.html" %}
 
-        <header>
-            <h1>🔒 CyberSecurity Training Platform</h1>
-            <p class="tagline">Team Plato • Learn, Quiz, Protect</p>
-        </header>
+{% block title %}Home{% endblock %}
+{% block nav_home %}navbar__link--active{% endblock %}
 
-        <!-- Feature Cards -->
-        <div class="features-grid">
-            <div class="feature-card">
-                <span class="feature-icon">🧠</span>
-                <h3>Interactive Quizzes</h3>
-                <p>Test your cybersecurity knowledge with hands-on quizzes. Track your progress and learn from mistakes!</p>
-                <a href="{% url 'core:quiz_list' %}" class="btn">Start Quizzing →</a>
-            </div>
+{% block content %}
+<div class="container">
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero__shield">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+        </div>
+        <h1 class="hero__title">Learn Cyber Security.<br><span>Stay Safe Online.</span></h1>
+        <p class="hero__desc">
+            An interactive platform designed for everyone &mdash; from young learners to seniors.
+            Build real skills through quizzes, AI chat, and breach checking tools.
+        </p>
+        <div class="hero__actions">
+            <a href="{% url 'core:quiz_list' %}" class="btn btn--accent btn--lg">Start a Quiz</a>
+            <a href="{% url 'core:chatbot' %}" class="btn btn--ghost btn--lg">Ask the Chatbot</a>
+        </div>
+    </section>
 
-            <div class="feature-card">
-                <span class="feature-icon">🤖</span>
-                <h3>Groq AI Chatbot</h3>
-                <p>Ask any cybersecurity question and get instant expert answers powered by Groq AI.</p>
-                <a href="{% url 'core:chatbot' %}" class="btn">Chat Now →</a>
-            </div>
-
-            <div class="feature-card">
-                <span class="feature-icon">🔍</span>
-                <h3>HIBP Breach Checker</h3>
-                <p>Check if your email has been involved in any data breaches using Have I Been Pwned API.</p>
-                <a href="{% url 'core:breach_checker' %}" class="btn">Check Email →</a>
-            </div>
+    <!-- Features -->
+    <section class="section">
+        <div class="text-center mb-4">
+            <p class="section__label">Platform Features</p>
+            <h2 class="section__title" style="max-width:100%;">Everything you need to learn cyber security</h2>
         </div>
 
-        <footer>
-            <p>Built by <strong>Team Plato</strong> | CS Student Project 2026 🚀</p>
-        </footer>
-    </div>
-</body>
-</html>
+        <div class="grid grid--3">
+            <!-- Quizzes -->
+            <a href="{% url 'core:quiz_list' %}" class="card card--interactive" style="text-decoration:none;">
+                <div class="card__icon card__icon--purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <h3 class="card__title">Interactive Quizzes</h3>
+                <p class="card__desc">Test your knowledge with curated quizzes on phishing, passwords, privacy, and more. Track your progress as you learn.</p>
+                <span class="btn btn--sm btn--primary">Browse Quizzes &rarr;</span>
+            </a>
+
+            <!-- AI Chatbot -->
+            <a href="{% url 'core:chatbot' %}" class="card card--interactive" style="text-decoration:none;">
+                <div class="card__icon card__icon--teal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="card__title">AI Chatbot</h3>
+                <p class="card__desc">Got a question about staying safe online? Ask our AI assistant &mdash; powered by Groq &mdash; and get clear, friendly answers.</p>
+                <span class="btn btn--sm btn--primary">Chat Now &rarr;</span>
+            </a>
+
+            <!-- Breach Checker -->
+            <a href="{% url 'core:breach_checker' %}" class="card card--interactive" style="text-decoration:none;">
+                <div class="card__icon card__icon--orange">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <h3 class="card__title">Breach Checker</h3>
+                <p class="card__desc">Check if your email has appeared in known data breaches using the Have I Been Pwned database. Stay informed and secure.</p>
+                <span class="btn btn--sm btn--primary">Check Email &rarr;</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- AI Quiz Generator callout -->
+    <section class="section">
+        <div class="cta-banner">
+            <div class="cta-banner__content">
+                <span class="badge badge--purple mb-2">AI Powered</span>
+                <h3 class="card__title mt-2">Generate Custom Quizzes</h3>
+                <p class="card__desc mb-0">Enter any cyber security topic and our AI will instantly create a tailored quiz just for you.</p>
+            </div>
+            <a href="{% url 'core:generate_quiz' %}" class="btn btn--accent btn--lg">Generate a Quiz</a>
+        </div>
+    </section>
+</div>
+{% endblock %}
