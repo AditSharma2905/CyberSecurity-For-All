@@ -1,0 +1,18 @@
+# Core auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+
+# Bibliography
+*.bbl
+*.bcf
+*.blg
+
+# Build tools and sync
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.run.xml

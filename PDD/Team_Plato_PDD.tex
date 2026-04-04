@@ -1,0 +1,562 @@
+\documentclass[11pt, a4paper]{report}
+
+% --- UNIVERSAL PREAMBLE BLOCK ---
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{fontspec}
+
+\usepackage[english, bidi=basic, provide=*]{babel}
+
+\babelprovide[import, onchar=ids fonts]{english}
+
+% Set default/Latin font to Serif in the main (rm) slot
+\babelfont{rm}{Noto Serif}
+% Set Sans-Serif font in the sf slot for the title page
+\babelfont{sf}{Noto Sans}
+% --------------------------------
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+% Display only the chapter title without any numbers
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{}{0pt}{}
+
+% Define colors used in the document
+\definecolor{maincolor}{RGB}{150,0,0}
+\definecolor{frontpagedark}{RGB}{50,50,50}
+\definecolor{riskLow}{RGB}{214, 239, 206}      % Soft Green
+\definecolor{riskMedium}{RGB}{255, 235, 156}   % Soft Amber
+\definecolor{riskHigh}{RGB}{255, 199, 206}     % Soft Red
+\definecolor{riskCritical}{RGB}{225, 190, 231} % Soft Purple
+\definecolor{lightHeader}{RGB}{240, 240, 240}  % Light Grey for headers
+
+% Globally remove extra vertical spacing for all lists
+\setlist{nosep}
+
+% Define a professional WBS list style that dynamically syncs with Section numbering
+\newlist{wbs}{enumerate}{4}
+\setlist[wbs]{nosep}
+\setlist[wbs,1]{label=\textbf{\thesection.\arabic*}, leftmargin=*, itemsep=0.2em, topsep=0.2em}
+\setlist[wbs,2]{label=\thesection.\arabic{wbsi}.\arabic*, leftmargin=*}
+\setlist[wbs,3]{label=\alph*., leftmargin=*} 
+\setlist[wbs,4]{label=\roman*., leftmargin=*}  
+
+\begin{document}
+
+%%% Front Matter %%%
+\pagenumbering{roman}
+
+\begin{titlepage}
+    \sffamily
+    \color{frontpagedark}
+    \vspace*{1cm}
+
+    % Title
+    \noindent
+    \makebox[\textwidth][l]{%
+        \parbox{\dimexpr\textwidth-2.5cm\relax}{
+            \setstretch{1.03}
+            \raggedright\bfseries\fontsize{20}{26}\selectfont 
+            Project Definition Document \fontsize{12}{26}\selectfont v3.1
+        }
+    }
+
+    \vspace{1.5\baselineskip}
+
+    % Subtitle
+    \noindent
+    \makebox[\textwidth][l]{%
+        \parbox{\dimexpr\textwidth-7cm\relax}{
+            \setstretch{1.03}
+            \raggedright\fontsize{14}{19}\selectfont Cyber Security for All
+        }
+    }
+
+    \vspace{45pt}
+
+    % Author
+    {\noindent\bfseries\fontsize{14}{19}\selectfont Group Plato}
+
+    \vfill    
+
+    % Team & Roles Information
+    {
+        \noindent
+        \fontsize{11}{14}\selectfont
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{@{}r@{\hspace{10pt}}>{\raggedright\arraybackslash}m{10cm}@{}}
+            \textbf{Sponsor:}      & Dany Varghese \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Project Sponsor} \\ [2ex]
+            
+            \textbf{Team Members:} & Jon Moloney \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Project Manager} \\ [.5ex]
+            
+                                   & Dominykas Vaisiunas \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Vice Project Manager} \\ [.5ex]
+
+                                   & Kartik Dharmala \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Technical Lead} \\ [.5ex]
+
+                                   & Adit Sharma \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Documentation Lead} \\ [.5ex]
+
+                                   & Yashovardhan Jain \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Frontend Developer / QA} \\ [.5ex]
+
+                                   & Khaleel Rahman \\ [-1ex]
+                                   & \setstretch{0.9}{\fontsize{9}{11}\selectfont\itshape Backend Developer / QA} \\
+        \end{tabular}
+    }
+    
+    \vfill
+    
+    % Institution Details
+    {\noindent\fontsize{10}{12}\selectfont University of Surrey \\}
+    {\noindent\fontsize{10}{12}\selectfont Academic Year: 2025/26}
+
+    \vspace{45pt}
+
+    % Local and date
+    {\noindent\fontsize{10}{12}\selectfont \today}
+
+    \vspace{30pt}
+\end{titlepage}
+
+%%% Table of Contents %%%
+\tableofcontents
+\clearpage
+
+%%% Arabic Numeration %%%
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\setstretch{1.1}
+
+%%% Chapters %%%
+\chapter{Project Charter}
+\label{cp:charter}
+
+\begin{table}[!htpb]
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\textwidth}{ccXl}
+        \toprule
+        \\[-1.5\normalbaselineskip]
+        \textbf{Version} & \textbf{Date} & \textbf{Summary of Changes} & \textbf{Author} \\ [0em]
+        \midrule
+        \textbf{v1.0} & March 2026 & Initial draft & Yashovardhan Jain \\
+        \textbf{v2.0} & March 2026 & Added privacy constraints, Education Module, tech stack details, improved risk analysis, and team members & Yashovardhan Jain \\
+        \textbf{v3.0} & March 2026 & Finalised draft & Adit Sharma \\
+        \textbf{v3.1} & March 2026 & Converted PDD to \LaTeX & Dominykas Vaisiunas \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Preface}
+Team Plato, a six-person student group at the University of Surrey, is developing the `Cyber Security for All' web application for the COM2042 module, employing an Agile methodology with weekly sprints and rotating roles. This document summarises the project's intent, scope, and constraints, establishing a formal agreement on objectives and deliverables among the team, project sponsor Dany Varghese, and module leader Andrew Crossan.
+
+\section{Business Need and Environment}
+Cybersecurity threats, including phishing emails, scams, and data breaches, pose significant risks to everyday internet users. Two demographics are disproportionately affected: older adults (50+), who may lack familiarity with evolving digital threats, and younger users (under 15), who are increasingly online but receive limited formal cybersecurity education. 
+
+Action Fraud, the UK’s national fraud reporting centre, notes that email and phone scams remain the most commonly reported crimes, with older adults comprising a significant proportion of victims. Consequently, there is a pressing need for an accessible, engaging, and educational platform targeting these vulnerable groups.
+
+The proposed web application, `Cyber Security for All', addresses this requirement by providing a data breach email checker, an AI-powered chatbot for personalised cybersecurity guidance, a gamified quiz system to reinforce learning, and an Education Module detailing the rationale behind quiz answers. These features are presented within a simple, age-appropriate interface.
+
+\section{Project Objectives and Constraints}
+
+\subsection{Project Objectives}
+The key high-level objectives of this project are: 
+\begin{itemize}
+    \item Develop and deploy a publicly accessible web application targeting users aged 50+ and under 15. 
+    \item Implement an email breach checker using the Have I Been Pwned (HIBP) API to identify compromised email addresses. 
+    \item Integrate an LLM-powered chatbot (Groq API, with Google Gemini fallback) to answer cybersecurity queries in accessible language. 
+    \item Create an LLM-generated gamified quiz system featuring a real-time leaderboard. 
+    \item Provide a post-quiz Education Module explaining answer rationales and broader cybersecurity threats, such as phishing.
+    \item Ensure the platform meets accessibility standards, featuring a clear user interface suitable for individuals with limited technical literacy. 
+    \item Deploy the application via the module's prescribed GitLab CI/CD pipeline. 
+\end{itemize}
+
+\subsection{Constraints}
+
+\textbf{Time Constraints:}
+\begin{itemize}
+    \item Project Definition Document (formative): Week 7, Tuesday 
+    \item Final Project Report Submission (Report + Software): Tuesday, 13 May 2026 at 4:00 PM 
+    \item Awards Day: June 2026 
+\end{itemize}
+
+\textbf{Scope Constraints:}
+\begin{itemize}
+    \item \textbf{In Scope:}
+    \begin{itemize}
+        \item Email breach checker (HIBP API integration).
+        \item LLM-powered cybersecurity chatbot.
+        \item Dynamic quiz generation.
+        \item Education Module: post-quiz explanations of answers, including phishing awareness content.
+        \item User account system for leaderboard participation; data collection for users under 15 is strictly limited to name and email address (no other personal data collected).
+        \item Deployment via the GitLab CI/CD pipeline.
+    \end{itemize}
+    \item \textbf{Out of Scope:}
+    \begin{itemize}
+        \item Real-time phishing detection of live URLs.
+        \item Mobile application development (web-only platform).
+        \item Integration with external email providers (e.g., Gmail, Outlook).
+        \item Full accessibility audit beyond standard WCAG 2.1 AA guidelines.
+        \item Collection of gender or extraneous personal data (especially for users under 15).
+    \end{itemize}
+\end{itemize}
+
+\begin{table}[!htpb]
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\textwidth}{llX}
+        \toprule
+        \\[-1.5\normalbaselineskip]
+        \textbf{Layer} & \textbf{Technology} & \textbf{Notes} \\ [0em]
+        \midrule
+        Frontend & HTML, CSS & Static templates served by Django; no separate JS framework. \\
+        Backend & Django (Python) & REST views, WebSocket/SSE support via Django Channels. \\
+        Database & MySQL & Stores user accounts, quiz scores, and leaderboard data. \\
+        CI/CD & GitLab CI/CD Pipeline & Provided by the module; mandatory for deployment. \\
+        LLM API (Primary) & Groq API & Chatbot responses and dynamic quiz generation. Utilises the Llama 3.3 70B model (fast inference, free tier). \\
+        LLM API (Fallback) & Google Gemini API & Fallback if Groq is unavailable. Uses the Gemini 2.0 Flash model via Google AI Studio (free tier). \\
+        Breach API & Have I Been Pwned (HIBP) v3 & Email breach verification. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\newpage
+
+\section{Dependencies}
+The full list of dependencies is:
+\begin{itemize}
+    \item \textbf{Have I Been Pwned (HIBP) API} --- Validates email breach status. Requires an API key (free tier available at \url{https://haveibeenpwned.com/API/v3}).
+    \item \textbf{Groq API (Primary LLM)} --- Powers the cybersecurity chatbot, dynamic quizzes, and Education Module. Utilises the Llama 3.3 70B model ($\sim$14,400 requests/day on the free tier).
+    \item \textbf{Google Gemini API (Fallback LLM)} --- Secondary LLM (Gemini 2.0 Flash) deployed if Groq is unavailable. Both Groq and Gemini share an OpenAI-compatible API format, facilitating seamless transitions.
+    \item \textbf{GitLab CI/CD Pipeline} --- Hosting and deployment infrastructure provided by the university module.
+    \item \textbf{Frontend:} HTML and CSS. Templates are rendered server-side by Django, eliminating the need for a separate JavaScript framework.
+    \item \textbf{Backend (Django/Python)} --- Manages routing, authentication, WebSocket/SSE streaming, and API integrations.
+    \item \textbf{Database (MySQL)} --- Stores user accounts, quiz scores, and leaderboard statistics.
+\end{itemize}
+
+\section{Stakeholders}
+Team Plato comprises six students enrolled in the COM2042 (Collaborative Project Using Web Applications) module at the University of Surrey. The team employs an Agile methodology incorporating weekly sprints, rotating roles, and regular sponsor meetings. 
+
+\begin{table}[!htpb]
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\textwidth}{llX}
+        \toprule
+        \\[-1.5\normalbaselineskip]
+        \textbf{Stakeholder} & \textbf{Role} & \textbf{Interest / Involvement} \\ [0em]
+        \midrule
+        Andrew Crossan & Module Leader & Oversees module requirements and assessment criteria. \\
+        Dany Varghese & Project Sponsor & Primary point of contact; approves scope, reviews progress, and resolves escalated conflicts. \\
+        Team Plato & Development Team & Responsible for software design, implementation, testing, and documentation. \\
+        Elderly Users (50+) & End Users & Primary demographic; requires an accessible and intuitive platform. \\
+        Young Users ($<$15) & End Users & Secondary demographic; requires engaging, age-appropriate content. Data collection is strictly limited to name and email. \\
+        University of Surrey & Institutional Stakeholder & Provides academic oversight and Green Tech Jam prize adjudication. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Project Description}
+`Cyber Security for All' is a publicly accessible web application targeting two underserved demographics: users aged 50+ and under 15. The platform features four core modules: an email breach checker (HIBP API), an LLM-powered cybersecurity chatbot (Groq API, with Google Gemini fallback), a dynamically generated gamified quiz system featuring a real-time leaderboard, and an Education Module providing post-quiz explanations alongside phishing awareness content. A user account system facilitates leaderboard participation, explicitly restricting data collection for users under 15 to name and email address to ensure UK GDPR compliance.
+
+\subsection{Alignment with Project Constraints}
+The project satisfies all constraints outlined in the Project Charter and the module specification. 
+
+\textbf{Technical:} The application integrates two external APIs (HIBP and Groq/Gemini), utilises real-time client-server streaming via WebSocket/SSE (Django Channels), and incorporates server-side data analytics, fulfilling all mandatory technical requirements. 
+
+\textbf{Deployment:} The application is deployed exclusively via the prescribed GitLab CI/CD pipeline.
+
+\textbf{Data Privacy:} Data collection for users under 15 is strictly limited to names and email addresses. Furthermore, email addresses queried through the breach checker are processed in-memory and are never persisted, substantially mitigating data privacy risks.
+
+\subsection{Feasibility Justification}
+Project feasibility within the established constraints is supported by the following factors: 
+
+\textbf{Framework Maturity:} Django (Python) and MySQL are extensively documented, industry-standard frameworks. Django's built-in ORM, authentication system, and Channels library significantly reduce development overhead and implementation risk.
+
+\textbf{Deployment Infrastructure:} The module-provided GitLab CI/CD pipeline eliminates the need to configure external hosting, streamlining the deployment lifecycle.
+
+\section{Project Management}
+
+\subsection{Roles and Responsibilities}
+The Project Manager (PM) role rotates weekly between two team members. The designated PM hosts all weekly meetings and oversees quality management, verifying that individual contributions align with project requirements. Each team member receives clearly defined responsibilities at the project's inception, establishing individual accountability for specific deliverables. This guarantees transparent ownership and efficient issue resolution.  
+
+\subsection{Meetings}
+The team conducts two formal weekly meetings to review progress, identify blockers, and provide mutual support. These sessions allow the team to evaluate output quality collectively. If tasks deviate from expectations, the team assesses necessary adjustments to approach, scope, or timelines.
+
+Meetings are structured to achieve the following outcomes: 
+\begin{itemize}
+    \item Aligning on current priorities and near-term goals.
+    \item Discussing challenges and agreeing on suitable mitigating actions.
+    \item Assigning next steps and individual action items.
+\end{itemize}
+
+\subsection{Record Keeping}
+Meeting minutes are recorded and retained as formal documentation. All project documents are stored centrally on Microsoft Teams to guarantee consistent access. The source code is maintained in a shared GitHub repository, providing strict version control and a collaborative hub for technical development. 
+
+\subsection{Legal and Compliance}
+The project processes all sensitive user data in accordance with the UK GDPR, ensuring lawful, transparent, and purpose-limited data collection. Users retain the right to request the erasure of their personal data, and the team maintains a streamlined process to fulfil these requests promptly.
+
+
+\chapter{Work Breakdown Structure}
+\label{cp:breakdown}
+
+\section{Project Management}
+
+\begin{wbs}
+    \item Define initial project concept
+    \item Conduct requirement research
+    \item Formulate Project Proposal
+    \begin{wbs}
+        \item Draft and submit proposal to project sponsor
+        \item Review proposal with project sponsor
+    \end{wbs}
+    \item Develop Project Definition Document (PDD)
+    \begin{wbs}
+        \item Author project purpose, description, and charter
+        \item Formulate Work Breakdown Structure (WBS)
+        \begin{wbs}
+            \item Create formatted WBS hierarchy
+        \end{wbs}
+        \item Develop project schedule
+        \begin{wbs}
+            \item Construct network logic diagram
+        \end{wbs}
+        \item Define project evaluation criteria
+        \item Establish rules of engagement
+        \item Conduct and document risk analysis
+        \item Submit PDD for formal review
+    \end{wbs}
+    \item Execute Project Pitch
+    \begin{wbs}
+        \item Draft and record presentation pitch
+        \item Submit pitch for review
+        \item Secure formal project confirmation
+    \end{wbs}
+\end{wbs}
+
+\section{Software Design \& Development}
+
+\begin{wbs}
+    \item Architect software solution
+    \begin{wbs}
+        \item Define technical infrastructure
+        \begin{wbs}
+            \item Select development tools and frameworks
+            \item Identify required software packages
+            \item Establish backend architecture
+        \end{wbs}
+    \end{wbs}
+    
+    \item Establish version control repository
+    
+    \item Implement backend systems
+    \begin{wbs}
+        \item Configure database environment
+        \item Integrate external Application Programming Interfaces (APIs)
+        \begin{wbs}
+            \item Integrate HIBP data breach API
+            \item Integrate primary and fallback LLM APIs
+        \end{wbs}
+        \item Implement real-time streaming components
+        \begin{wbs}
+            \item Develop server-side WebSocket/SSE endpoints
+        \end{wbs}
+    \end{wbs}
+    
+    \item Implement frontend interface
+    \begin{wbs}
+        \item Design User Interface (UI)
+        \begin{wbs}
+            \item Wireframe quiz and leaderboard interfaces
+            \item Wireframe email breach checker interface
+        \end{wbs}
+        \item Develop interactive web pages
+        \begin{wbs}
+            \item Implement user account system
+            \item Implement educational quiz module
+        \end{wbs}
+    \end{wbs}
+\end{wbs}
+
+\vspace{1em}
+\section{Software Testing \& Deployment}
+\begin{wbs}
+    \item Execute Quality Assurance (QA)
+    \begin{wbs}
+        \item Develop unit test plan
+        \item Script unit tests
+        \item Execute unit tests against codebase
+        \begin{wbs}
+            \item Document test results
+            \item Debug and resolve identified faults
+        \end{wbs}
+        \item Refine interface and system functionality
+    \end{wbs}
+    
+    \item Finalise Project Deliverables
+    \begin{wbs}
+        \item Author and manage final deliverables
+        \item Review and submit deliverables
+    \end{wbs}
+    
+    \item Execute Project Deployment
+    \begin{wbs}
+        \item Configure Continuous Integration/Continuous Deployment (CI/CD) pipeline
+        \item Deploy application via GitLab infrastructure
+    \end{wbs}
+\end{wbs}
+
+
+\chapter{Rules of Engagement}
+\label{cp:engagement}
+
+\section{Team Roles \& Structure}
+\begin{itemize}
+    \item The development team adheres to an Agile methodology, executing weekly sprints.
+    \item Team roles rotate on a weekly basis to guarantee that all members acquire comprehensive experience across all project domains.
+\end{itemize}
+
+\section{Communication \& Behaviour Protocol}
+\begin{itemize}
+    \item Discord serves as the primary channel for day-to-day communication.
+    \item All messages and project-related queries must receive a response within 48 hours.
+    \item Any new internal project deadlines necessitate a minimum of three days' advance notice.
+\end{itemize}
+
+\section{Meeting Protocol}
+\begin{itemize}
+    \item Formal status meetings with the Project Sponsor convene every Tuesday at 16:30 via Microsoft Teams.
+    \item An internal team synchronisation meeting is held every Friday at 17:00 via Microsoft Teams, independent of the Project Sponsor.
+\end{itemize}
+
+\section{Decision-Making \& Conflict Resolution}
+\begin{itemize}
+    \item Internal disagreements shall be mediated objectively by the acting Project Manager.
+    \item Should the active Project Manager be a direct party to the conflict, the issue must be formally escalated to the Project Sponsor, Dany Varghese, for resolution.
+\end{itemize}
+
+\section{Tools \& Workflow}
+\begin{itemize}
+    \item Source version control and the Continuous Integration/Continuous Deployment (CI/CD) pipeline are exclusively managed via GitLab.
+\end{itemize}
+
+
+\chapter{Evaluation Criteria}
+\label{cp:criteria}
+
+This chapter establishes the metrics and methodologies used to evaluate the project's success across technical execution, feature delivery, user satisfaction, and team management.
+
+\section{Technical Quality}
+\begin{itemize}
+    \item \textbf{Unit Testing:} Application performance and reliability will be measured by calculating unit test pass and fail rates for backend routing, database interactions, and API handling.
+    \item \textbf{Code Standards:} All codebase contributions must be written in Python unless specified otherwise (e.g., HTML/CSS for templates), and must adhere strictly to DRY (Don't Repeat Yourself) principles to ensure elegant, maintainable code.
+    \item \textbf{Deployment:} Successful, error-free application deployment via the provided GitLab CI/CD pipeline.
+\end{itemize}
+
+\section{Feature Implementation (Project Scope)}
+\begin{itemize}
+    \item \textbf{Account Management \& Data Privacy:} Verification that the registration system strictly restricts data collection for users under 15 to name and email address only.
+    \item \textbf{Email Breach Checker:} Successful integration of the Have I Been Pwned (HIBP) API, validated via unit tests to ensure accurate request handling and resilient fallback messaging during downtime.
+    \item \textbf{LLM Chatbot \& Quiz:} Consistent uptime and rapid response generation via the Groq API, with verified automated failover to the Google Gemini fallback upon exceeding rate limits.
+    \item \textbf{Education Module:} Rigorous accuracy testing to verify the LLM correctly generates contextual, educational explanations for cybersecurity quiz answers.
+    \item \textbf{Real-Time Leaderboard:} Quality of Service (QoS) measurement of WebSocket/SSE streaming to guarantee seamless, real-time leaderboard updates.
+\end{itemize}
+
+\section{Audience Satisfaction (User Evaluation)}
+\begin{itemize}
+    \item \textbf{Peer Review Testing:} Two external beta-testing groups will navigate the application, supplying qualitative feedback regarding the overall user experience and interface design.
+    \item \textbf{Target Demographic Alignment:} Peer evaluations will explicitly assess whether the application is accessible and intuitive for older adults (50+), whilst remaining engaging and age-appropriate for younger users (under 15).
+\end{itemize}
+
+\section{Project Management}
+\begin{itemize}
+    \item \textbf{Sprint Completion:} Team success will be evaluated based on adherence to the Agile methodology, specifically the achievement of weekly sprint goals and the provision of a minimum of three days' notice for all internal deadlines.
+    \item \textbf{Role Rotation:} Successful execution of the weekly role rotation strategy, ensuring all members assume varied responsibilities efficiently without impeding project velocity.
+\end{itemize}
+
+
+\chapter{Risk Analysis}
+\label{cp:risk}
+
+This section identifies and assesses the key risks associated with the 'Cyber Security for All' project. Each risk has been assigned a mitigation action, probability, impact rating, severity, and management strategy. Risk severity is colour-coded: High (red), Medium (amber), and Low (green). 
+
+The matrix below shows how probability and impact combine to determine overall risk severity.
+\begin{table}[!htpb]
+    \centering
+    \renewcommand{\arraystretch}{2} 
+    \begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{lightHeader}}l|*3{>{\centering\arraybackslash}X|}}
+        \hline
+        \rowcolor{lightHeader} 
+        Probability \textbackslash{} Impact & \textbf{Low Impact} & \textbf{Medium Impact} & \textbf{High Impact} \\ \hline
+        
+        High Probability   & \cellcolor{riskMedium}\textbf{Medium} & \cellcolor{riskHigh}\textbf{High}     & \cellcolor{riskHigh}\textbf{High}   \\ \hline
+        
+        Medium Probability & \cellcolor{riskLow}\textbf{Low}       & \cellcolor{riskMedium}\textbf{Medium} & \cellcolor{riskHigh}\textbf{High}   \\ \hline
+        
+        Low Probability    & \cellcolor{riskLow}\textbf{Low}       & \cellcolor{riskLow}\textbf{Low}       & \cellcolor{riskMedium}\textbf{Medium} \\ \hline
+    \end{tabularx}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{c >{\hsize=0.9\hsize\raggedright\arraybackslash}X >{\hsize=1.1\hsize\raggedright\arraybackslash}X}
+        \toprule
+        \textbf{ID} & \textbf{Risk \& Affected Module} & \textbf{Strategy \& Action} \\
+        \midrule
+        \cellcolor{riskMedium} 1 & \textbf{Groq API rate limits exceeded} \newline \textit{LLM / Chatbot \& Quiz} & \textbf{Contingency:} Auto-switch to Gemini on rate limit. Cache responses. \\
+        \midrule
+        \cellcolor{riskLow} 2    & \textbf{Gemini fallback API unavailability} \newline \textit{LLM / Chatbot \& Quiz} & \textbf{Contingency:} Swap to alternative free-tier provider. Monitor status. \\
+        \midrule
+        \cellcolor{riskMedium} 3 & \textbf{HIBP API changes or downtime} \newline \textit{Email Breach Checker} & \textbf{Contingency:} Implement fallback UI messaging. Monitor API status. \\
+        \midrule
+        \cellcolor{riskMedium} 4 & \textbf{Team member unavailability} \newline \textit{All Modules} & \textbf{Contingency:} Rotate roles and document handovers for seamless coverage. \\
+        \midrule
+        \cellcolor{riskHigh} 5   & \textbf{Data privacy breach} \newline \textit{Email Breach / User Accounts} & \textbf{Avoid:} Process emails in-memory only. Restrict under-15 data to name and email. \\
+        \midrule
+        \cellcolor{riskMedium} 6 & \textbf{Scope creep beyond constraints} \newline \textit{All Modules} & \textbf{Contain:} Require PM and Sponsor sign-off for any scope changes. \\
+        \midrule
+        \cellcolor{riskHigh} 7   & \textbf{CI/CD pipeline configuration issues} \newline \textit{Deployment / CI/CD} & \textbf{Contingency:} Allocate early DevOps time (Weeks 1--2). Test pipeline early. \\
+        \midrule
+        \cellcolor{riskMedium} 8 & \textbf{Education Module content accuracy} \newline \textit{Education Module} & \textbf{Contingency:} Review LLM outputs against trusted sources. Fallback to static content. \\
+        \midrule
+        \cellcolor{riskMedium} 9 & \textbf{Django/MySQL integration issues} \newline \textit{Backend / Database} & \textbf{Contingency:} Use Django ORM consistently. Test migrations locally first. \\
+        \midrule
+        \cellcolor{riskHigh} 10  & \textbf{Under-15 data compliance} \newline \textit{User Accounts / Data Privacy} & \textbf{Avoid:} Collect only name/email for under-15s. No profiling or sharing. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\appendix
+\clearpage
+\addtocontents{toc}{\protect\contentsline{chapter}{Appendices}{}{}}
+
+\begin{center}
+    \thispagestyle{empty}
+    \vspace*{\fill}
+    {\LARGE\bfseries{Appendices}\par}
+    \vspace*{\fill}
+\end{center}
+
+\chapter{Scheduling Information Diagram}
+
+\begin{figure}[htbp]
+  \centering
+  \framebox{\parbox{0.8\textwidth}{\centering
+    \vspace{3cm}
+    \textbf{Image Placeholder} \\
+    \small\textit{A placeholder for the HD Scheduling Diagram.}
+    \vspace{3cm}
+  }}
+  \caption{Scheduling Information Diagram}
+  \label{fig:schedule_placeholder}
+\end{figure}
+
+\end{document}
