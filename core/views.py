@@ -8,6 +8,8 @@ from django.utils import timezone
 from .models import Quiz, Question, Answer, QuizAttempt, QuizAnswer
 import json
 from django.views.decorators.http import require_http_methods
+from django.db import transaction
+from django.urls import reverse
 
 
 def home(request):
@@ -52,7 +54,9 @@ def quiz_list(request):
 def take_quiz(request, quiz_id):
     """Display quiz form."""
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    questions = quiz.questions.select_related('answers').order_by('order')
+    
+    # Use prefetch_related for reverse foreign key relationships
+    questions = quiz.questions.prefetch_related('answers').order_by('order')
     
     if request.method == 'POST':
         return process_quiz(request, quiz)
@@ -103,21 +107,52 @@ def quiz_results(request, quiz_id, attempt_id):
     return render(request, "core/quiz_results.html", {"attempt": attempt, "percentage": percentage})
 
 
-def generate_quiz(request):  # Simple function view
+def generate_quiz(request):
     if request.method == "GET":
-        # Renders your form
         return render(request, "core/generate_quiz.html")
     
-    # POST handling
     topic = request.POST.get("topic", "cybersecurity")
     agegroup = request.POST.get("agegroup", "all")
     
-    prompt = f'Quiz on "{topic}" for {agegroup}. Return JSON only:\n{{"title":"...", "questions":[...], "description":"..."}}'
+    prompt = f'Quiz on "{topic}" for {agegroup}. Return JSON only without markdown formatting:\n{{"title":"...", "description":"...", "questions":[{{"text":"...", "explanation":"...", "answers":[{{"text":"...", "is_correct":true}}]}}]}}'
     
     response = LLM_API().get_llm_response(prompt)
     
-    # Safe JSON response
     try:
-        return JsonResponse({"quiz": json.loads(response)})
-    except:
-        return JsonResponse({"raw": response})
+        # Extract only the JSON portion from the LLM's response
+        start_idx = response.find('{')
+        end_idx = response.rfind('}')
+        
+        if start_idx != -1 and end_idx != -1:
+            clean_response = response[start_idx:end_idx+1]
+        else:
+            clean_response = response
+            
+        quiz_data = json.loads(clean_response)
+        
+        # Use a database transaction so it only saves if everything is successful
+        with transaction.atomic():
+            quiz = Quiz.objects.create(
+                title=quiz_data.get("title", f"{topic} Quiz"),
+                description=quiz_data.get("description", "")
+            )
+            
+            for i, q_data in enumerate(quiz_data.get("questions", [])):
+                question = Question.objects.create(
+                    quiz=quiz,
+                    text=q_data.get("text", q_data.get("question", "")),
+                    explanation=q_data.get("explanation", ""),
+                    order=i
+                )
+                
+                for a_data in q_data.get("answers", []):
+                    Answer.objects.create(
+                        question=question,
+                        text=a_data.get("text", ""),
+                        is_correct=a_data.get("is_correct", a_data.get("correct", False)) 
+                    )
+                    
+        return JsonResponse({"redirect_url": reverse("core:take_quiz", args=[quiz.id])})
+        
+    except Exception as e:
+        return JsonResponse({"error": f"Failed to parse and save quiz: {str(e)} \n\nRaw Output: {response}"})

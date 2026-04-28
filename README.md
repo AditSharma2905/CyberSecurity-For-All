@@ -80,16 +80,23 @@ Developed as part of the COM2042 module at the University of Surrey, this platfo
     GROQ_API_KEY=your_groq_key
     GEMINI_API_KEY=your_gemini_key
     HIBP_API_KEY=your_hibp_key
+    DB_NAME=teamplato_db
     DB_USER=your_db_user
     DB_PASSWORD=your_db_password
     ```
 
-5. **Run Database Migrations**
+5. **Create the Database**
+    Open your MySQL command line or client and create the database:
+    ```sql
+    CREATE DATABASE teamplato_db;
+    ```
+
+6. **Run Database Migrations**
     ```bash
     python manage.py migrate
     ```
 
-6. **Start the Development Server**
+7. **Start the Development Server**
     ```bash
     python manage.py runserver
     ```

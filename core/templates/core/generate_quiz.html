@@ -82,8 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const quiz = data.quiz || data;
-            displayQuiz(quiz);
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else {
+                output.innerHTML = '<div class="alert alert--error">Failed to get redirect URL.</div>';
+            }
 
         } catch (error) {
             output.innerHTML = '<div class="alert alert--error">Network error: ' + error.message + '</div>';
