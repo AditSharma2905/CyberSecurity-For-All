@@ -1,29 +1,24 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
 
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 class LeaderboardConsumer(AsyncWebsocketConsumer):
-
     async def connect(self):
         self.quiz_id = self.scope.get("url_route", {}).get("kwargs", {}).get("quiz_id")
         self.group_name = f"leaderboard_{self.quiz_id}"
 
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
-
-        # Send leaderboard on connect
-        data = await self.get_leaderboard(self.quiz_id)
-        await self.send(text_data=json.dumps({
-            "type": "leaderboard_update",
-            "data": data
-        }))
+        await self.send_leaderboard()
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def leaderboard_update(self, event):
-        
+        await self.send_leaderboard()
+
+    async def send_leaderboard(self):
         data = await self.get_leaderboard(self.quiz_id)
         await self.send(text_data=json.dumps({
             "type": "leaderboard_update",
@@ -41,18 +36,14 @@ class LeaderboardConsumer(AsyncWebsocketConsumer):
             .order_by("-score", "completed_at")[:20]
         )
 
-        rows = []
-        for rank, a in enumerate(attempts, start=1):
-            username = a.user.get_full_name() or a.user.username if a.user else "Anonymous"
-            pct = round(a.score / a.total_questions * 100) if a.total_questions else 0
-
-            rows.append({
+        return [
+            {
                 "rank": rank,
-                "username": username,
+                "username": a.user.get_full_name() or a.user.username if a.user else "Anonymous",
                 "score": a.score,
                 "total": a.total_questions,
-                "percentage": pct,
+                "percentage": round(a.score / a.total_questions * 100) if a.total_questions else 0,
                 "completed_at": a.completed_at.strftime("%H:%M:%S"),
-            })
-
-        return rows
+            }
+            for rank, a in enumerate(attempts, start=1)
+        ]

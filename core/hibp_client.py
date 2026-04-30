@@ -18,12 +18,19 @@ def check_breaches(email: str):
     params = {"truncateResponse": "false"}
 
     try:
-        resp = requests.get(BASE_URL + email, headers=headers, params=params, timeout=5)
-    except requests.RequestException:
-        return None
+        response = requests.get(
+            f"{BASE_URL}{email}",
+            headers=headers,
+            params=params,
+            timeout=5
+        )
 
-    if resp.status_code == 404:
-        return []        # no breaches
-    if resp.status_code == 200:
-        return resp.json()
+        if response.status_code == 200:
+            return response.json()
+        if response.status_code == 404:
+            return []
+
+    except requests.RequestException:
+        pass
+
     return None
