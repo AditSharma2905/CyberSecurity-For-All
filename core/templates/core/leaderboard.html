@@ -59,7 +59,7 @@
 
   <div class="lb-header">
     <div>
-      <h1 class="page__title lb-title">🏆 Leaderboard</h1>
+      <h1 class="page__title lb-title">Leaderboard</h1>
       <p class="page__subtitle lb-subtitle">{{ quiz.title }}</p>
     </div>
 
@@ -85,7 +85,7 @@
           {% for row in rows %}
           <tr>
             <td class="lb-rank {% if row.rank == 1 %}lb-rank--1{% elif row.rank == 2 %}lb-rank--2{% elif row.rank == 3 %}lb-rank--3{% endif %}">
-              {% if row.rank == 1 %}🥇{% elif row.rank == 2 %}🥈{% elif row.rank == 3 %}🥉{% else %}{{ row.rank }}{% endif %}
+              {% if row.rank == 1 %}1st{% elif row.rank == 2 %}2nd{% elif row.rank == 3 %}3rd{% else %}{{ row.rank }}{% endif %}
             </td>
             <td><strong>{{ row.username }}</strong></td>
             <td>{{ row.score }} / {{ row.total }}</td>
@@ -130,7 +130,7 @@
   const statusTxt = document.getElementById("ws-status-text");
   const tbody     = document.getElementById("lb-body");
 
-  const MEDALS = ["🥇", "🥈", "🥉"];
+  const MEDALS = ["1st", "2nd", "3rd"];
   const RANK_CLASSES = ["lb-rank--1", "lb-rank--2", "lb-rank--3"];
 
   /* ── Build / replace the table body from fresh data ─────────────── */
