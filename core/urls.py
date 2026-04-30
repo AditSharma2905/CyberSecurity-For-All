@@ -15,4 +15,5 @@ urlpatterns = [
     path("generate-quiz/", views.generate_quiz, name="generate_quiz"),
     
     path("signup/", views.SignUpView.as_view(), name="signup"),
+    path("leaderboard/<int:quiz_id>/", views.leaderboard, name="leaderboard")
 ]

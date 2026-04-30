@@ -174,3 +174,27 @@ def generate_quiz(request):
         
     except Exception as e:
         return JsonResponse({"error": f"Failed to parse and save quiz: {str(e)} \n\nRaw Output: {response}"})
+
+def leaderboard(request, quiz_id):
+    """Dedicated leaderboard page with live WebSocket updates."""
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    # Initial data rendered server-side; WebSocket keeps it live
+    attempts = (
+        QuizAttempt.objects
+        .filter(quiz=quiz)
+        .select_related("user")
+        .order_by("-score", "completed_at")[:20]
+    )
+    rows = []
+    for rank, a in enumerate(attempts, start=1):
+        username = a.user.get_full_name() or a.user.username if a.user else "Anonymous"
+        pct = round(a.score / a.total_questions * 100) if a.total_questions else 0
+        rows.append({
+            "rank": rank,
+            "username": username,
+            "score": a.score,
+            "total": a.total_questions,
+            "percentage": pct,
+            "completed_at": a.completed_at.strftime("%H:%M:%S"),
+        })
+    return render(request, "core/leaderboard.html", {"quiz": quiz, "rows": rows})    

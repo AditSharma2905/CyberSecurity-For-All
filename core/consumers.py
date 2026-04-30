@@ -23,7 +23,7 @@ class LeaderboardConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def leaderboard_update(self, event):
-        # 🔥 ALWAYS refresh from DB
+        
         data = await self.get_leaderboard(self.quiz_id)
         await self.send(text_data=json.dumps({
             "type": "leaderboard_update",
