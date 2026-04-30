@@ -487,3 +487,4 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/django,visualstudiocode,pycharm,intellij,python,venv
 .DS_Store
+core/migrations/0002_alter_quiz_options_and_more.py

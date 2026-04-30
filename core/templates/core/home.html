@@ -1,25 +1,37 @@
-{% extends "core/base.html" %}
-
-{% block title %}Home{% endblock %}
-{% block nav_home %}navbar__link--active{% endblock %}
-
-{% block content %}
+{% extends "core/base.html" %} {% block title %}Home{% endblock %} {% block
+nav_home %}navbar__link--active{% endblock %} {% block content %}
 <div class="container">
     <!-- Hero -->
     <section class="hero">
         <div class="hero__shield">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
         </div>
-        <h1 class="hero__title">Learn Cyber Security.<br><span>Stay Safe Online.</span></h1>
+        <h1 class="hero__title">
+            Learn Cyber Security.<br /><span>Stay Safe Online.</span>
+        </h1>
         <p class="hero__desc">
-            An interactive platform designed for everyone &mdash; from young learners to seniors.
-            Build real skills through quizzes, AI chat, and breach checking tools.
+            An interactive platform designed for everyone &mdash; from young
+            learners to seniors. Build real skills through quizzes, AI chat, and
+            breach checking tools.
         </p>
         <div class="hero__actions">
-            <a href="{% url 'core:quiz_list' %}" class="btn btn--accent btn--lg">Start a Quiz</a>
-            <a href="{% url 'core:chatbot' %}" class="btn btn--ghost btn--lg">Ask the Chatbot</a>
+            <a href="{% url 'core:quiz_list' %}" class="btn btn--accent btn--lg"
+                >Start a Quiz</a
+            >
+            <a href="{% url 'core:chatbot' %}" class="btn btn--ghost btn--lg"
+                >Ask the Chatbot</a
+            >
         </div>
     </section>
 
@@ -27,43 +39,105 @@
     <section class="section">
         <div class="text-center mb-4">
             <p class="section__label">Platform Features</p>
-            <h2 class="section__title" style="max-width:100%;">Everything you need to learn cyber security</h2>
+            <h2 class="section__title" style="max-width: 100%">
+                Everything you need to learn cyber security
+            </h2>
         </div>
 
         <div class="grid grid--3">
             <!-- Quizzes -->
-            <a href="{% url 'core:quiz_list' %}" class="card card--interactive" style="text-decoration:none;">
+            <a
+                href="{% url 'core:quiz_list' %}"
+                class="card card--interactive"
+                style="text-decoration: none"
+            >
                 <div class="card__icon card__icon--purple">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
                     </svg>
                 </div>
                 <h3 class="card__title">Interactive Quizzes</h3>
-                <p class="card__desc">Test your knowledge with curated quizzes on phishing, passwords, privacy, and more. Track your progress as you learn.</p>
-                <span class="btn btn--sm btn--primary">Browse Quizzes &rarr;</span>
+                <p class="card__desc">
+                    Test your knowledge with curated quizzes on phishing,
+                    passwords, privacy, and more. Track your progress as you
+                    learn.
+                </p>
+                <span class="btn btn--sm btn--primary"
+                    >Browse Quizzes &rarr;</span
+                >
             </a>
 
             <!-- AI Chatbot -->
-            <a href="{% url 'core:chatbot' %}" class="card card--interactive" style="text-decoration:none;">
+            <a
+                href="{% url 'core:chatbot' %}"
+                class="card card--interactive"
+                style="text-decoration: none"
+            >
                 <div class="card__icon card__icon--teal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                        />
                     </svg>
                 </div>
                 <h3 class="card__title">AI Chatbot</h3>
-                <p class="card__desc">Got a question about staying safe online? Ask our AI assistant &mdash; powered by Groq &mdash; and get clear, friendly answers.</p>
+                <p class="card__desc">
+                    Got a question about staying safe online? Ask our AI
+                    assistant &mdash; powered by Groq &mdash; and get clear,
+                    friendly answers.
+                </p>
                 <span class="btn btn--sm btn--primary">Chat Now &rarr;</span>
             </a>
 
             <!-- Breach Checker -->
-            <a href="{% url 'core:breach_checker' %}" class="card card--interactive" style="text-decoration:none;">
+            <a
+                href="{% url 'core:breach_checker' %}"
+                class="card card--interactive"
+                style="text-decoration: none"
+            >
                 <div class="card__icon card__icon--orange">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
                     </svg>
                 </div>
                 <h3 class="card__title">Breach Checker</h3>
-                <p class="card__desc">Check if your email has appeared in known data breaches using the Have I Been Pwned database. Stay informed and secure.</p>
+                <p class="card__desc">
+                    Check if your email has appeared in known data breaches
+                    using the Have I Been Pwned database. Stay informed and
+                    secure.
+                </p>
                 <span class="btn btn--sm btn--primary">Check Email &rarr;</span>
             </a>
         </div>
@@ -75,9 +149,16 @@
             <div class="cta-banner__content">
                 <span class="badge badge--purple mb-2">AI Powered</span>
                 <h3 class="card__title mt-2">Generate Custom Quizzes</h3>
-                <p class="card__desc mb-0">Enter any cyber security topic and our AI will instantly create a tailored quiz just for you.</p>
+                <p class="card__desc mb-0">
+                    Enter any cyber security topic and our AI will instantly
+                    create a tailored quiz just for you.
+                </p>
             </div>
-            <a href="{% url 'core:generate_quiz' %}" class="btn btn--accent btn--lg">Generate a Quiz</a>
+            <a
+                href="{% url 'core:generate_quiz' %}"
+                class="btn btn--accent btn--lg"
+                >Generate a Quiz</a
+            >
         </div>
     </section>
 </div>
