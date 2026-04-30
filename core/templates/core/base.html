@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TeamPlato - AI-powered learning, quizzes, and security breach tools.">
+    <meta name="keywords" content="TeamPlato, AI Quiz, Education, Breach Checker, Learning Management">
     <title>{% block title %}TeamPlato{% endblock %} | Team Plato</title>
     <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
     {% block extra_css %}{% endblock %}
@@ -20,7 +22,7 @@
             </a>
 
             <button class="navbar__toggle" onclick="document.getElementById('navLinks').classList.toggle('navbar__links--open')" aria-label="Toggle navigation">
-                &#9776;
+                ☰
             </button>
 
             <ul class="navbar__links" id="navLinks">
@@ -33,7 +35,7 @@
                 {% if user.is_authenticated %}
                     <li><span class="navbar__link">User: {{ user.username }}</span></li>
                     <li>
-                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        <form method="post" action="{% url 'logout' %}" class="navbar__form--inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn--ghost btn--sm">Log Out</button>
                         </form>
@@ -54,7 +56,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>Built by <strong>Team Plato</strong> &middot; COM2042 Group Project 2026</p>
+            <p>Built by <strong>Team Plato</strong> · COM2042 Group Project 2026</p>
         </div>
     </footer>
 

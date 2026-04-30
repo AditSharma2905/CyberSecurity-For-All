@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container page">
     <div class="page__header">
-        <div class="flex justify-between items-center flex-wrap" style="gap:16px;">
+        <div class="flex justify-between items-center flex-wrap header-flex">
             <div>
                 <h1 class="page__title">Quizzes</h1>
                 <p class="page__subtitle">Test your cyber security knowledge. Pick a quiz and see how you score.</p>
@@ -31,7 +31,7 @@
             <p class="card__desc">{{ quiz.description }}</p>
             <div class="flex gap-2">
                 <a href="{% url 'core:take_quiz' quiz.id %}" class="btn btn--accent btn--sm">
-                    Start Quiz &rarr;
+                    Start Quiz →
                 </a>
                 <a href="{% url 'core:leaderboard' quiz.id %}" class="btn btn--ghost btn--sm">
                     Leaderboard
@@ -43,7 +43,7 @@
     {% else %}
     <div class="empty-state">
         <div class="empty-state__icon">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="u-muted-icon">
                 <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
         </div>

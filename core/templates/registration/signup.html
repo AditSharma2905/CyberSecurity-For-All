@@ -13,16 +13,15 @@
         <form method="post" id="signupForm">
             {% csrf_token %}
 
-            <!-- Django's Auto-Generated Form Fields -->
             {% for field in form %}
                 <div class="form-group">
                     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
-                        <p class="text-muted mt-1" style="font-size: 0.85em;">{{ field.help_text|safe }}</p>
+                        <p class="text-muted mt-1 u-small">{{ field.help_text|safe }}</p>
                     {% endif %}
                     {% for error in field.errors %}
-                        <div class="alert alert--error mt-1" style="padding: 8px;">{{ error }}</div>
+                        <div class="alert alert--error mt-1 u-compact">{{ error }}</div>
                     {% endfor %}
                 </div>
             {% endfor %}
@@ -46,7 +45,6 @@
             input.classList.add('form-input');
         });
 
-        // 2. GDPR Frontend Age Check
         const signupForm = document.getElementById('signupForm');
         signupForm.addEventListener('submit', function(e) {
             const dobInput = document.getElementById('dob').value;
@@ -60,7 +58,6 @@
                     age--;
                 }
                 
-                // Triggers special privacy notice for users under 15
                 if (age < 15) {
                     alert("Privacy Notice: Because you are under 15, strict privacy settings have been applied to your account. Only your username will be collected for the leaderboard.");
                 }

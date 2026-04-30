@@ -5,146 +5,52 @@
 
 {% block extra_css %}
 <style>
-  /* ── Leaderboard page styles ─────────────────────────────────────── */
-  .lb-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .lb-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-muted, #888);
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 1.5px solid currentColor;
-    transition: color 0.3s, border-color 0.3s;
-  }
-  .lb-status__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-    flex-shrink: 0;
-  }
-  .lb-status--live   { color: #22c55e; }
+  /* Existing styles preserved */
+  .lb-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+  .lb-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted, #888); padding: 6px 14px; border-radius: 999px; border: 1.5px solid currentColor; transition: color 0.3s, border-color 0.3s; }
+  .lb-status__dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .lb-status--live { color: #22c55e; }
   .lb-status--closed { color: #f97316; }
 
-  /* Pulse animation for live dot */
-  @keyframes pulse-dot {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50%       { transform: scale(1.6); opacity: .5; }
-  }
+  @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .5; } }
   .lb-status--live .lb-status__dot { animation: pulse-dot 1.4s ease-in-out infinite; }
 
-  /* ── Table ─────────────────────────────────────────────────────────── */
-  .lb-table-wrap {
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid var(--border, rgba(255,255,255,.08));
-    background: var(--surface, rgba(255,255,255,.04));
-  }
-
-  #lb-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-  }
-
-  #lb-table th {
-    padding: 14px 18px;
-    text-align: left;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    color: var(--text-muted, #888);
-    border-bottom: 1px solid var(--border, rgba(255,255,255,.08));
-    white-space: nowrap;
-  }
-  #lb-table td {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border, rgba(255,255,255,.06));
-    color: var(--text-body, #ccc);
-    white-space: nowrap;
-    transition: background 0.25s;
-  }
-  #lb-table tr:last-child td { border-bottom: none; }
-
-  /* Row flash when updated */
-  @keyframes row-flash {
-    0%   { background: rgba(99,102,241,.30); }
-    100% { background: transparent; }
-  }
+  .lb-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border, rgba(255,255,255,.08)); background: var(--surface, rgba(255,255,255,.04)); }
+  #lb-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  #lb-table th { padding: 14px 18px; text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted, #888); border-bottom: 1px solid var(--border, rgba(255,255,255,.08)); white-space: nowrap; }
+  #lb-table td { padding: 14px 18px; border-bottom: 1px solid var(--border, rgba(255,255,255,.06)); color: var(--text-body, #ccc); white-space: nowrap; transition: background 0.25s; }
+  
+  @keyframes row-flash { 0% { background: rgba(99,102,241,.30); } 100% { background: transparent; } }
   .lb-row--flash { animation: row-flash .8s ease-out forwards; }
 
-  /* Rank medals */
-  .lb-rank {
-    font-weight: 700;
-    font-size: 1.05rem;
-    width: 36px;
-    text-align: center;
-  }
+  .lb-rank { font-weight: 700; font-size: 1.05rem; width: 36px; text-align: center; }
   .lb-rank--1 { color: #fbbf24; }
   .lb-rank--2 { color: #9ca3af; }
   .lb-rank--3 { color: #d97706; }
 
-  /* Score bar */
-  .lb-bar-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 160px;
-  }
-  .lb-bar-bg {
-    flex: 1;
-    height: 8px;
-    border-radius: 99px;
-    background: rgba(255,255,255,.08);
-    overflow: hidden;
-  }
-  .lb-bar-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, #6366f1, #818cf8);
-    transition: width .6s ease;
-  }
-  .lb-pct {
-    font-weight: 700;
-    font-size: 0.88rem;
-    color: var(--text-heading, #fff);
-    min-width: 38px;
-    text-align: right;
-  }
+  .lb-bar-wrap { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+  .lb-bar-bg { flex: 1; height: 8px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .lb-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #6366f1, #818cf8); transition: width .6s ease; }
+  .lb-pct { font-weight: 700; font-size: 0.88rem; color: var(--text-heading, #fff); min-width: 38px; text-align: right; }
 
-  /* Empty state */
-  .lb-empty {
-    padding: 48px 24px;
-    text-align: center;
-    color: var(--text-muted, #888);
-  }
+  .lb-empty { padding: 48px 24px; text-align: center; color: var(--text-muted, #888); }
   .lb-empty svg { margin-bottom: 12px; opacity: .4; }
+
+  /* New Utility Classes */
+  .btn--inline { display: inline-flex; }
+  .lb-title { margin-bottom: 4px; }
+  .lb-subtitle { margin: 0; }
+  .u-text-center { text-align: center; }
+  .lb-empty-icon { display: block; margin: 0 auto 8px; }
+  .lb-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container container--narrow page">
 
-  <!-- Back + title -->
-  <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost btn--sm mb-3"
-     style="display:inline-flex;">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2.5"
-         stroke-linecap="round" stroke-linejoin="round">
+  <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost btn--sm mb-3 btn--inline">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line x1="19" y1="12" x2="5" y2="12"/>
       <polyline points="12 19 5 12 12 5"/>
     </svg>
@@ -153,8 +59,8 @@
 
   <div class="lb-header">
     <div>
-      <h1 class="page__title" style="margin-bottom:4px;">🏆 Leaderboard</h1>
-      <p class="page__subtitle" style="margin:0;">{{ quiz.title }}</p>
+      <h1 class="page__title lb-title">🏆 Leaderboard</h1>
+      <p class="page__subtitle lb-subtitle">{{ quiz.title }}</p>
     </div>
 
     <span class="lb-status lb-status--closed" id="ws-status">
@@ -163,12 +69,11 @@
     </span>
   </div>
 
-  <!-- Leaderboard table -->
   <div class="lb-table-wrap">
     <table id="lb-table" aria-live="polite" aria-label="Live leaderboard">
       <thead>
         <tr>
-          <th style="text-align:center;">#</th>
+          <th class="u-text-center">#</th>
           <th>Player</th>
           <th>Score</th>
           <th>Progress</th>
@@ -183,7 +88,7 @@
               {% if row.rank == 1 %}🥇{% elif row.rank == 2 %}🥈{% elif row.rank == 3 %}🥉{% else %}{{ row.rank }}{% endif %}
             </td>
             <td><strong>{{ row.username }}</strong></td>
-            <td>{{ row.score }}&thinsp;/&thinsp;{{ row.total }}</td>
+            <td>{{ row.score }} / {{ row.total }}</td>
             <td>
               <div class="lb-bar-wrap">
                 <div class="lb-bar-bg">
@@ -197,9 +102,7 @@
           {% endfor %}
         {% else %}
           <tr><td colspan="5" class="lb-empty">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="1.5"
-                 stroke-linecap="round" stroke-linejoin="round" display="block" style="margin:0 auto 8px;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lb-empty-icon">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -211,8 +114,7 @@
     </table>
   </div>
 
-  <!-- CTA buttons -->
-  <div class="mt-4" style="display:flex;gap:12px;flex-wrap:wrap;">
+  <div class="mt-4 lb-actions">
     <a href="{% url 'core:take_quiz' quiz.id %}" class="btn btn--primary">Take This Quiz</a>
     <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost">All Quizzes</a>
   </div>

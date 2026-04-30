@@ -20,6 +20,7 @@
                     type="text"
                     class="form-input"
                     id="topic"
+                    name="topic"
                     placeholder="e.g. phishing, SQL injection, password security, social engineering"
                     value="phishing awareness"
                     required
@@ -27,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label" for="agegroup">Target Audience</label>
-                <select class="form-select" id="agegroup">
+                <select class="form-select" id="agegroup" name="agegroup">
                     <option value="beginners">Beginners</option>
                     <option value="advanced">Advanced</option>
                     <option value="<15">Under 15</option>
@@ -40,7 +41,7 @@
         </form>
     </div>
 
-    <div id="quiz-output" style="display:none;"></div>
+    <div id="quiz-output" class="u-hidden"></div>
 </div>
 {% endblock %}
 
@@ -59,8 +60,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> Generating...';
-        output.style.display = 'block';
-        output.innerHTML = '<div class="card text-center" style="padding:40px;"><span class="spinner" style="width:28px;height:28px;border-width:3px;"></span><p class="text-muted mt-2">AI is creating your quiz...</p></div>';
+        
+        output.classList.remove('u-hidden');
+        output.innerHTML = `
+            <div class="card text-center quiz-loading-card">
+                <span class="spinner spinner--large"></span>
+                <p class="text-muted mt-2">AI is creating your quiz...</p>
+            </div>`;
 
         try {
             const formData = new FormData();
@@ -95,38 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.innerHTML = 'Generate Quiz';
         }
     });
-
-    function displayQuiz(quiz) {
-        let html = '<div class="fade-in">';
-        html += '<h2 style="color:var(--text-heading); font-size:1.5em; margin-bottom:8px;">' + (quiz.title || 'Generated Quiz') + '</h2>';
-
-        if (quiz.description) {
-            html += '<p class="text-muted mb-3">' + quiz.description + '</p>';
-        }
-
-        if (quiz.questions && Array.isArray(quiz.questions)) {
-            quiz.questions.forEach(function (q, i) {
-                html += '<div class="gen-quiz__question">';
-                html += '<h3>Q' + (i + 1) + ': ' + (q.text || q.question) + '</h3>';
-
-                if (q.answers && Array.isArray(q.answers)) {
-                    q.answers.forEach(function (ans) {
-                        const isCorrect = ans.correct === true;
-                        html += '<div class="gen-quiz__answer ' + (isCorrect ? 'gen-quiz__answer--correct' : 'gen-quiz__answer--wrong') + '">';
-                        html += (isCorrect ? '&#10003; ' : '&#10007; ') + ans.text;
-                        html += '</div>';
-                    });
-                }
-
-                html += '</div>';
-            });
-        } else {
-            html += '<div class="card"><pre style="white-space:pre-wrap; color:var(--text-muted);">' + JSON.stringify(quiz, null, 2) + '</pre></div>';
-        }
-
-        html += '</div>';
-        output.innerHTML = html;
-    }
 });
 </script>
 {% endblock %}

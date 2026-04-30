@@ -28,7 +28,7 @@
 
     {% if email %}
         {% if breaches is None %}
-            <div class="alert alert--error">Service unavailable &mdash; please try again later.</div>
+            <div class="alert alert--error">Service unavailable — please try again later.</div>
         {% elif breaches|length == 0 %}
             <div class="alert alert--success">
                 <strong>No breaches found!</strong> Your email does not appear in any known data breaches.
@@ -39,12 +39,12 @@
             </div>
 
             {% for breach in breaches %}
-            <div class="card mb-2" style="padding:18px 22px;">
-                <div class="flex justify-between items-center flex-wrap" style="gap:8px;">
+            <div class="card mb-2 breach-card">
+                <div class="flex justify-between items-center flex-wrap breach-header">
                     <div>
-                        <p style="color:var(--text-heading); font-weight:600;">{{ breach.Name }}</p>
+                        <p class="breach-title">{{ breach.Name }}</p>
                         {% if breach.Domain %}
-                        <p class="text-muted" style="font-size:0.9em;">{{ breach.Domain }}</p>
+                        <p class="text-muted breach-domain">{{ breach.Domain }}</p>
                         {% endif %}
                     </div>
                     <span class="badge badge--purple">Breached</span>

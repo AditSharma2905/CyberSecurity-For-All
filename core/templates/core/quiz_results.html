@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container container--narrow page">
-    <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost btn--sm mb-3" style="display:inline-flex;">
+    <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost btn--sm mb-3 btn--inline">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
         </svg>
@@ -20,11 +20,11 @@
     {% else %}
     <div class="result-banner result-banner--fail fade-in">
         <p class="result-banner__score">{{ attempt.score }} / {{ attempt.total_questions }}</p>
-        <p class="result-banner__label">You scored {{ percentage }}% &mdash; keep practising!</p>
+        <p class="result-banner__label">You scored {{ percentage }}% — keep practising!</p>
     </div>
     {% endif %}
 
-    <h2 style="color:var(--text-heading); font-size:1.3em; margin-bottom:20px;">Detailed Feedback</h2>
+    <h2 class="feedback-heading">Detailed Feedback</h2>
 
     {% for answer in attempt.answers.all %}
     <div class="feedback-item {% if answer.is_correct %}feedback-item--correct{% else %}feedback-item--wrong{% endif %} fade-in">
