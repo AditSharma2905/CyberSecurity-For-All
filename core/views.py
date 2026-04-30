@@ -1,4 +1,4 @@
-import json
+import markdown
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -37,12 +37,12 @@ def breach_checker(request):
 def chatbot(request):
     answer = None
     question = request.POST.get("question", "").strip() if request.method == "POST" else ""
-
     if question:
         answer = LLMAPI().get_llm_response(question)
         if not answer:
             answer = "Sorry, I could not get a response right now. Please try again."
-
+        else:
+            answer = markdown.markdown(answer)
     return render(request, "core/chatbot.html", {"question": question, "answer": answer})
 
 # --- QUIZ MANAGEMENT ---
