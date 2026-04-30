@@ -107,3 +107,5 @@ LOGGING = {
 
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
 
+LOGIN_REDIRECT_URL = "core:home"
+LOGOUT_REDIRECT_URL = "core:home"
