@@ -120,6 +120,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+HIBP_API_KEY = os.environ.get("HIBP_API_KEY", "")
 
 LOGIN_REDIRECT_URL = "core:home"
 LOGOUT_REDIRECT_URL = "core:home"
