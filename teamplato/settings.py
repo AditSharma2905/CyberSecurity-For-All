@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'data_wizard',
     'data_wizard.sources',
+    'channels',
     'crispy_forms',
     'crispy_bootstrap5',
     'core',  # Your cybersecurity app
@@ -54,6 +55,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'teamplato.wsgi.application'
+ASGI_APPLICATION = 'teamplato.asgi.application'
 
 DATABASES = {
     'default': {
@@ -64,6 +66,12 @@ DATABASES = {
         'HOST': 'localhost', 
         'PORT': '3306',
     }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
 }
 
 LANGUAGE_CODE = 'en-us'

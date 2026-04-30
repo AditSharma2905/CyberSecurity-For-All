@@ -4,6 +4,8 @@ from .LLM_api import LLM_API
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.utils import timezone
 from .models import Quiz, Question, Answer, QuizAttempt, QuizAnswer
 import json
@@ -56,7 +58,7 @@ def take_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     
     # Use prefetch_related for reverse foreign key relationships
-    questions = quiz.questions.prefetch_related('answers').order_by('order')
+    questions = quiz.questions.prefetch_related('answers').order_by('order') # type: ignore
     
     if request.method == 'POST':
         return process_quiz(request, quiz)
@@ -96,6 +98,15 @@ def process_quiz(request, quiz):
     
     attempt.score = score
     attempt.save()
+
+    # Send live leaderboard update
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"leaderboard_{quiz.id}",
+        {
+            "type": "leaderboard_update",
+        }
+    )
     
     messages.success(request, f"You scored {score}/{len(questions)} ({score/len(questions)*100:.0f}%)!")
     return redirect('core:quiz_results', quiz_id=quiz.id, attempt_id=attempt.id)

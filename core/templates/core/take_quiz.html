@@ -15,7 +15,25 @@
         <h1 class="page__title">{{ quiz.title }}</h1>
         <p class="page__subtitle">{{ quiz.description }}</p>
     </div>
+<!--> LIVE LEADERBOARD (ADDED) -->
+<div class="question-card fade-in" style="margin-bottom: 20px;">
+    <h3>Live Leaderboard</h3>
 
+    <table id="leaderboard" style="width:100%; margin-top:10px;">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>User</th>
+                <th>Score</th>
+                <th>%</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="5">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
     <form method="post" id="quizForm">
         {% csrf_token %}
 
@@ -51,6 +69,57 @@ function highlightSelected(label) {
     const parent = label.closest('.question-card');
     parent.querySelectorAll('.radio-card').forEach(l => l.classList.remove('radio-card--selected'));
     label.classList.add('radio-card--selected');
+}
+</script>
+<script>
+/* 🔥 LIVE LEADERBOARD WEBSOCKET (ADDED ONLY) */
+
+const quizId = "{{ quiz.id }}";
+
+// auto detect ws/wss
+const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+
+const socket = new WebSocket(
+    protocol + window.location.host + "/ws/leaderboard/" + quizId + "/"
+);
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    if (data.type === "leaderboard_update") {
+        updateLeaderboard(data.data);
+    }
+};
+
+socket.onclose = function(e) {
+    console.error("WebSocket closed unexpectedly");
+};
+
+function updateLeaderboard(rows) {
+    const tbody = document.querySelector("#leaderboard tbody");
+
+    if (!tbody) return; // safety (in case table missing)
+
+    tbody.innerHTML = "";
+
+    if (!rows || rows.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='5'>No attempts yet</td></tr>";
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${row.rank}</td>
+            <td>${row.username}</td>
+            <td>${row.score}/${row.total}</td>
+            <td>${row.percentage}%</td>
+            <td>${row.completed_at}</td>
+        `;
+
+        tbody.appendChild(tr);
+    });
 }
 </script>
 {% endblock %}
