@@ -12,7 +12,6 @@ et_xmlfile==2.0.0
 html-json-forms==1.1.1
 idna==3.11
 itertable==2.2.0
-mysqlclient==2.2.8
 natural-keys==2.1.1
 openpyxl==3.1.5
 pillow==12.1.1
