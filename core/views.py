@@ -110,30 +110,24 @@ def generate_quiz(request):
 
     topic = request.POST.get("topic", "cybersecurity")
     agegroup = request.POST.get("agegroup", "all")
-    prompt = (
-        f"Quiz on '{topic}' for {agegroup}. Return JSON only:\n"
-        '{"title":"...", "description":"...", "questions":[{"text":"...", "explanation":"...", '
-        '"answers":[{"text":"...", "is_correct":true}]}]}'
-    )
 
-    response = LLMAPI().get_llm_response(prompt)
     try:
-        # Extract JSON from potential markdown/prose
-        raw_json = response[response.find("{"):response.rfind("}") + 1]
-        data = json.loads(raw_json)
+        quiz_data = LLMAPI().generate_quiz_data(topic, agegroup)
 
         with transaction.atomic():
             quiz = Quiz.objects.create(
-                title=data.get("title", f"{topic} Quiz"),
-                description=data.get("description", "")
+                title=quiz_data.get("title", f"{topic} Quiz"),
+                description=quiz_data.get("description", "")
             )
-            for i, q in enumerate(data.get("questions", [])):
+
+            for i, q in enumerate(quiz_data.get("questions", [])):
                 question = Question.objects.create(
                     quiz=quiz,
                     text=q.get("text", q.get("question", "")),
                     explanation=q.get("explanation", ""),
                     order=i
                 )
+
                 for a in q.get("answers", []):
                     Answer.objects.create(
                         question=question,
@@ -143,7 +137,7 @@ def generate_quiz(request):
 
         return JsonResponse({"redirect_url": reverse("core:take_quiz", args=[quiz.id])})
     except Exception as e:
-        return JsonResponse({"error": f"Parse error: {str(e)}", "raw": response}, status=400)
+        return JsonResponse({"error": f"Parse error: {str(e)}"}, status=400)
 
 def leaderboard(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
