@@ -29,6 +29,19 @@
                 <li><a href="{% url 'core:generate_quiz' %}" class="navbar__link {% block nav_generate %}{% endblock %}">AI Quiz</a></li>
                 <li><a href="{% url 'core:chatbot' %}" class="navbar__link {% block nav_chatbot %}{% endblock %}">Chatbot</a></li>
                 <li><a href="{% url 'core:breach_checker' %}" class="navbar__link {% block nav_breach %}{% endblock %}">Breach Checker</a></li>
+
+                {% if user.is_authenticated %}
+                    <li><span class="navbar__link">User: {{ user.username }}</span></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn--ghost btn--sm">Log Out</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="navbar__link">Log In</a></li>
+                    <li><a href="{% url 'core:signup' %}" class="btn btn--primary btn--sm">Sign Up</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>

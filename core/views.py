@@ -10,7 +10,14 @@ import json
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.urls import reverse
+from .forms import CustomSignupForm
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
 
+class SignUpView(CreateView):
+    form_class = CustomSignupForm
+    success_url = reverse_lazy("login")
+    template_name = "registration/signup.html"
 
 def home(request):
     return render(request, "core/home.html")
