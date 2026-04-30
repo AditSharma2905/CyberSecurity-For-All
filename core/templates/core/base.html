@@ -1,132 +1,63 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{% block title %}CyberSafe{% endblock %} | Team Plato</title>
-        <link rel="stylesheet" href="{% static 'core/css/styles.css' %}" />
-        {% block extra_css %}{% endblock %}
-    </head>
-    <body>
-        <!-- Navbar -->
-        <nav class="navbar">
-            <div class="navbar__inner">
-                <a href="{% url 'core:home' %}" class="navbar__brand">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                    CyberSafe
-                </a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CyberSafe{% endblock %} | Team Plato</title>
+    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar__inner">
+            <a href="{% url 'core:home' %}" class="navbar__brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                CyberSafe
+            </a>
 
-                <button
-                    class="navbar__toggle"
-                    onclick="
-                        document
-                            .getElementById('navLinks')
-                            .classList.toggle('navbar__links--open')
-                    "
-                    aria-label="Toggle navigation"
-                >
-                    &#9776;
-                </button>
+            <button class="navbar__toggle" onclick="document.getElementById('navLinks').classList.toggle('navbar__links--open')" aria-label="Toggle navigation">
+                &#9776;
+            </button>
 
-                <ul class="navbar__links" id="navLinks">
-                    <li>
-                        <a
-                            href="{% url 'core:home' %}"
-                            class="navbar__link {% block nav_home %}{% endblock %}"
-                            >Home</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="{% url 'core:quiz_list' %}"
-                            class="navbar__link {% block nav_quizzes %}{% endblock %}"
-                            >Quizzes</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="{% url 'core:generate_quiz' %}"
-                            class="navbar__link {% block nav_generate %}{% endblock %}"
-                            >AI Quiz</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="{% url 'core:chatbot' %}"
-                            class="navbar__link {% block nav_chatbot %}{% endblock %}"
-                            >Chatbot</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="{% url 'core:breach_checker' %}"
-                            class="navbar__link {% block nav_breach %}{% endblock %}"
-                            >Breach Checker</a
-                        >
-                    </li>
+            <ul class="navbar__links" id="navLinks">
+                <li><a href="{% url 'core:home' %}" class="navbar__link {% block nav_home %}{% endblock %}">Home</a></li>
+                <li><a href="{% url 'core:quiz_list' %}" class="navbar__link {% block nav_quizzes %}{% endblock %}">Quizzes</a></li>
+                <li><a href="{% url 'core:generate_quiz' %}" class="navbar__link {% block nav_generate %}{% endblock %}">AI Quiz</a></li>
+                <li><a href="{% url 'core:chatbot' %}" class="navbar__link {% block nav_chatbot %}{% endblock %}">Chatbot</a></li>
+                <li><a href="{% url 'core:breach_checker' %}" class="navbar__link {% block nav_breach %}{% endblock %}">Breach Checker</a></li>
 
-                    {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
+                    <li><span class="navbar__link">User: {{ user.username }}</span></li>
                     <li>
-                        <span class="navbar__link"
-                            >User: {{ user.username }}</span
-                        >
-                    </li>
-                    <li>
-                        <form
-                            method="post"
-                            action="{% url 'logout' %}"
-                            style="display: inline"
-                        >
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
                             {% csrf_token %}
-                            <button
-                                type="submit"
-                                class="btn btn--ghost btn--sm"
-                            >
-                                Log Out
-                            </button>
+                            <button type="submit" class="btn btn--ghost btn--sm">Log Out</button>
                         </form>
                     </li>
-                    {% else %}
-                    <li>
-                        <a href="{% url 'login' %}" class="navbar__link"
-                            >Log In</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="{% url 'core:signup' %}"
-                            class="btn btn--primary btn--sm"
-                            >Sign Up</a
-                        >
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </nav>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="navbar__link">Log In</a></li>
+                    <li><a href="{% url 'core:signup' %}" class="btn btn--primary btn--sm">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 
-        <!-- Main Content -->
-        <main>{% block content %}{% endblock %}</main>
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="container">
-                <p>
-                    Built by <strong>Team Plato</strong> &middot; COM2042 Group
-                    Project 2026
-                </p>
-            </div>
-        </footer>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Built by <strong>Team Plato</strong> &middot; COM2042 Group Project 2026</p>
+        </div>
+    </footer>
 
-        {% block extra_js %}{% endblock %}
-    </body>
+    {% block extra_js %}{% endblock %}
+</body>
 </html>

@@ -1,61 +1,33 @@
-{% extends "core/base.html" %} {% block title %}Quiz Results{% endblock %} {%
-block nav_quizzes %}navbar__link--active{% endblock %} {% block content %}
+{% extends "core/base.html" %}
+
+{% block title %}Quiz Results{% endblock %}
+{% block nav_quizzes %}navbar__link--active{% endblock %}
+
+{% block content %}
 <div class="container container--narrow page">
-    <a
-        href="{% url 'core:quiz_list' %}"
-        class="btn btn--ghost btn--sm mb-3"
-        style="display: inline-flex"
-    >
-        <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
+    <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost btn--sm mb-3" style="display:inline-flex;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
         </svg>
         Back to Quizzes
     </a>
 
     {% if percentage >= 70 %}
     <div class="result-banner result-banner--pass fade-in">
-        <p class="result-banner__score">
-            {{ attempt.score }} / {{ attempt.total_questions }}
-        </p>
-        <p class="result-banner__label">
-            Great job! You scored {{ percentage }}%
-        </p>
+        <p class="result-banner__score">{{ attempt.score }} / {{ attempt.total_questions }}</p>
+        <p class="result-banner__label">Great job! You scored {{ percentage }}%</p>
     </div>
     {% else %}
     <div class="result-banner result-banner--fail fade-in">
-        <p class="result-banner__score">
-            {{ attempt.score }} / {{ attempt.total_questions }}
-        </p>
-        <p class="result-banner__label">
-            You scored {{ percentage }}% &mdash; keep practising!
-        </p>
+        <p class="result-banner__score">{{ attempt.score }} / {{ attempt.total_questions }}</p>
+        <p class="result-banner__label">You scored {{ percentage }}% &mdash; keep practising!</p>
     </div>
     {% endif %}
 
-    <h2
-        style="
-            color: var(--text-heading);
-            font-size: 1.3em;
-            margin-bottom: 20px;
-        "
-    >
-        Detailed Feedback
-    </h2>
+    <h2 style="color:var(--text-heading); font-size:1.3em; margin-bottom:20px;">Detailed Feedback</h2>
 
     {% for answer in attempt.answers.all %}
-    <div
-        class="feedback-item {% if answer.is_correct %}feedback-item--correct{% else %}feedback-item--wrong{% endif %} fade-in"
-    >
+    <div class="feedback-item {% if answer.is_correct %}feedback-item--correct{% else %}feedback-item--wrong{% endif %} fade-in">
         <p class="feedback-item__status">
             {% if answer.is_correct %}Correct{% else %}Incorrect{% endif %}
         </p>
@@ -65,26 +37,18 @@ block nav_quizzes %}navbar__link--active{% endblock %} {% block content %}
         <p class="feedback-item__correct-answer">
             Your answer: {{ answer.answer.text }}
         </p>
-        {% endif %} {% if answer.question.explanation %}
-        <p class="feedback-item__explanation">
-            {{ answer.question.explanation }}
-        </p>
+        {% endif %}
+
+        {% if answer.question.explanation %}
+        <p class="feedback-item__explanation">{{ answer.question.explanation }}</p>
         {% endif %}
     </div>
     {% endfor %}
 
     <div class="mt-4 flex gap-2 flex-wrap">
-        <a
-            href="{% url 'core:take_quiz' attempt.quiz.id %}"
-            class="btn btn--primary"
-            >Retry Quiz</a
-        >
-        <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost"
-            >Browse Quizzes</a
-        >
-        <a href="{% url 'core:chatbot' %}" class="btn btn--ghost"
-            >Ask the Chatbot</a
-        >
+        <a href="{% url 'core:take_quiz' attempt.quiz.id %}" class="btn btn--primary">Retry Quiz</a>
+        <a href="{% url 'core:quiz_list' %}" class="btn btn--ghost">Browse Quizzes</a>
+        <a href="{% url 'core:chatbot' %}" class="btn btn--ghost">Ask the Chatbot</a>
     </div>
 </div>
 {% endblock %}

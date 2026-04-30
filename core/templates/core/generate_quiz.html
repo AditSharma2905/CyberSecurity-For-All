@@ -1,13 +1,14 @@
-{% extends "core/base.html" %} {% block title %}AI Quiz Generator{% endblock %}
-{% block nav_generate %}navbar__link--active{% endblock %} {% block content %}
+{% extends "core/base.html" %}
+
+{% block title %}AI Quiz Generator{% endblock %}
+{% block nav_generate %}navbar__link--active{% endblock %}
+
+{% block content %}
 <div class="container container--narrow page">
     <div class="page__header">
         <span class="badge badge--teal mb-2">AI Powered</span>
         <h1 class="page__title">Generate a Quiz</h1>
-        <p class="page__subtitle">
-            Enter any cyber security topic and our AI will create a quiz for you
-            instantly.
-        </p>
+        <p class="page__subtitle">Enter any cyber security topic and our AI will create a quiz for you instantly.</p>
     </div>
 
     <div class="card mb-4">
@@ -22,7 +23,7 @@
                     placeholder="e.g. phishing, SQL injection, password security, social engineering"
                     value="phishing awareness"
                     required
-                />
+                >
             </div>
             <div class="form-group">
                 <label class="form-label" for="agegroup">Target Audience</label>
@@ -33,129 +34,99 @@
                     <option value=">50">Over 50</option>
                 </select>
             </div>
-            <button
-                type="submit"
-                id="generateBtn"
-                class="btn btn--accent btn--lg btn--full"
-            >
+            <button type="submit" id="generateBtn" class="btn btn--accent btn--lg btn--full">
                 Generate Quiz
             </button>
         </form>
     </div>
 
-    <div id="quiz-output" style="display: none"></div>
+    <div id="quiz-output" style="display:none;"></div>
 </div>
-{% endblock %} {% block extra_js %}
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("quizForm");
-        const btn = document.getElementById("generateBtn");
-        const output = document.getElementById("quiz-output");
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('quizForm');
+    const btn = document.getElementById('generateBtn');
+    const output = document.getElementById('quiz-output');
 
-        form.addEventListener("submit", async function (e) {
-            e.preventDefault();
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-            const topic = document.getElementById("topic").value;
-            const ageGroup = document.getElementById("agegroup").value;
+        const topic = document.getElementById('topic').value;
+        const ageGroup = document.getElementById('agegroup').value;
 
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Generating...';
-            output.style.display = "block";
-            output.innerHTML =
-                '<div class="card text-center" style="padding:40px;"><span class="spinner" style="width:28px;height:28px;border-width:3px;"></span><p class="text-muted mt-2">AI is creating your quiz...</p></div>';
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Generating...';
+        output.style.display = 'block';
+        output.innerHTML = '<div class="card text-center" style="padding:40px;"><span class="spinner" style="width:28px;height:28px;border-width:3px;"></span><p class="text-muted mt-2">AI is creating your quiz...</p></div>';
 
-            try {
-                const formData = new FormData();
-                formData.append("topic", topic);
-                formData.append("agegroup", ageGroup);
+        try {
+            const formData = new FormData();
+            formData.append('topic', topic);
+            formData.append('agegroup', ageGroup);
 
-                const response = await fetch("/generate-quiz/", {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "X-CSRFToken": document.querySelector(
-                            "[name=csrfmiddlewaretoken]",
-                        ).value,
-                    },
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    output.innerHTML =
-                        '<div class="alert alert--error">' +
-                        data.error +
-                        "</div>";
-                    return;
+            const response = await fetch('/generate-quiz/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
+            });
 
-                if (data.redirect_url) {
-                    window.location.href = data.redirect_url;
-                } else {
-                    output.innerHTML =
-                        '<div class="alert alert--error">Failed to get redirect URL.</div>';
-                }
-            } catch (error) {
-                output.innerHTML =
-                    '<div class="alert alert--error">Network error: ' +
-                    error.message +
-                    "</div>";
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = "Generate Quiz";
-            }
-        });
+            const data = await response.json();
 
-        function displayQuiz(quiz) {
-            let html = '<div class="fade-in">';
-            html +=
-                '<h2 style="color:var(--text-heading); font-size:1.5em; margin-bottom:8px;">' +
-                (quiz.title || "Generated Quiz") +
-                "</h2>";
-
-            if (quiz.description) {
-                html +=
-                    '<p class="text-muted mb-3">' + quiz.description + "</p>";
+            if (data.error) {
+                output.innerHTML = '<div class="alert alert--error">' + data.error + '</div>';
+                return;
             }
 
-            if (quiz.questions && Array.isArray(quiz.questions)) {
-                quiz.questions.forEach(function (q, i) {
-                    html += '<div class="gen-quiz__question">';
-                    html +=
-                        "<h3>Q" +
-                        (i + 1) +
-                        ": " +
-                        (q.text || q.question) +
-                        "</h3>";
-
-                    if (q.answers && Array.isArray(q.answers)) {
-                        q.answers.forEach(function (ans) {
-                            const isCorrect = ans.correct === true;
-                            html +=
-                                '<div class="gen-quiz__answer ' +
-                                (isCorrect
-                                    ? "gen-quiz__answer--correct"
-                                    : "gen-quiz__answer--wrong") +
-                                '">';
-                            html +=
-                                (isCorrect ? "&#10003; " : "&#10007; ") +
-                                ans.text;
-                            html += "</div>";
-                        });
-                    }
-
-                    html += "</div>";
-                });
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
             } else {
-                html +=
-                    '<div class="card"><pre style="white-space:pre-wrap; color:var(--text-muted);">' +
-                    JSON.stringify(quiz, null, 2) +
-                    "</pre></div>";
+                output.innerHTML = '<div class="alert alert--error">Failed to get redirect URL.</div>';
             }
 
-            html += "</div>";
-            output.innerHTML = html;
+        } catch (error) {
+            output.innerHTML = '<div class="alert alert--error">Network error: ' + error.message + '</div>';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Generate Quiz';
         }
     });
+
+    function displayQuiz(quiz) {
+        let html = '<div class="fade-in">';
+        html += '<h2 style="color:var(--text-heading); font-size:1.5em; margin-bottom:8px;">' + (quiz.title || 'Generated Quiz') + '</h2>';
+
+        if (quiz.description) {
+            html += '<p class="text-muted mb-3">' + quiz.description + '</p>';
+        }
+
+        if (quiz.questions && Array.isArray(quiz.questions)) {
+            quiz.questions.forEach(function (q, i) {
+                html += '<div class="gen-quiz__question">';
+                html += '<h3>Q' + (i + 1) + ': ' + (q.text || q.question) + '</h3>';
+
+                if (q.answers && Array.isArray(q.answers)) {
+                    q.answers.forEach(function (ans) {
+                        const isCorrect = ans.correct === true;
+                        html += '<div class="gen-quiz__answer ' + (isCorrect ? 'gen-quiz__answer--correct' : 'gen-quiz__answer--wrong') + '">';
+                        html += (isCorrect ? '&#10003; ' : '&#10007; ') + ans.text;
+                        html += '</div>';
+                    });
+                }
+
+                html += '</div>';
+            });
+        } else {
+            html += '<div class="card"><pre style="white-space:pre-wrap; color:var(--text-muted);">' + JSON.stringify(quiz, null, 2) + '</pre></div>';
+        }
+
+        html += '</div>';
+        output.innerHTML = html;
+    }
+});
 </script>
 {% endblock %}
