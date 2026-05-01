@@ -4,6 +4,7 @@ import re
 from google import genai
 from google.genai import types
 from groq import Groq
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +51,7 @@ class LLMAPI:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt},
             ],
+            response_format={"type": "json_object"} # Added JSON mode
         )
         content = response.choices[0].message.content
         if content is None:
@@ -59,7 +61,8 @@ class LLMAPI:
     def _get_gemini_response(self, prompt: str) -> str:
         response = self.gemini_client.models.generate_content(
             model="gemma-3-27b-it",
-            contents=[f"{SYSTEM_PROMPT}\n\n{prompt}"]
+            contents=[f"{SYSTEM_PROMPT}\n\n{prompt}"],
+            config=types.GenerateContentConfig(response_mime_type="application/json") # Added JSON mode
         )
         if response.text is None:
             raise ValueError("Gemini response text was None")
@@ -84,6 +87,9 @@ class LLMAPI:
             )
             a_res = self.get_llm_response(a_prompt)
             a_data = self._parse_json(a_res)
-            q["answers"] = a_data.get("answers", [])
+            
+            answers = a_data.get("answers", [])
+            random.shuffle(answers)
+            q["answers"] = answers
 
         return quiz_data
