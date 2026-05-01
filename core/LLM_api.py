@@ -44,7 +44,6 @@ class LLMAPI:
         raise ConnectionError("All LLM providers failed to respond")
 
     def _get_groq_response(self, prompt: str) -> str:
-        raise ValueError("Groq response content was None")
         response = self.groq_client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
