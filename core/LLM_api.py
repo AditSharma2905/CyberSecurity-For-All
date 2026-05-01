@@ -22,10 +22,9 @@ class LLMAPI:
         self.providers = [self._get_groq_response, self._get_gemini_response]
 
     def _parse_json(self, text: str) -> dict:
-        # Strip markdown formatting
+
         text = text.replace('```json', '').replace('```', '')
         
-        # Extract everything between the first '{' and the last '}'
         start = text.find('{')
         end = text.rfind('}')
         
@@ -51,7 +50,7 @@ class LLMAPI:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt},
             ],
-            response_format={"type": "json_object"} # Added JSON mode
+            response_format={"type": "json_object"}
         )
         content = response.choices[0].message.content
         if content is None:

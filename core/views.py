@@ -37,12 +37,19 @@ def breach_checker(request):
 def chatbot(request):
     answer = None
     question = request.POST.get("question", "").strip() if request.method == "POST" else ""
+
     if question:
-        answer = LLMAPI().get_llm_response(question)
-        if not answer:
-            answer = "Sorry, I could not get a response right now. Please try again."
-        else:
-            answer = markdown.markdown(answer)
+        try:
+            answer = LLMAPI().get_llm_response(question)
+            if not answer:
+                answer = "Sorry, I could not get a response right now. Please try again."
+            else:
+                answer = markdown.markdown(answer)
+        except ConnectionError:
+            answer = "Service unavailable. Both AI providers failed to respond. Please try again later."
+        except Exception:
+            answer = "An unexpected error occurred. Please try again later."
+
     return render(request, "core/chatbot.html", {"question": question, "answer": answer})
 
 # --- QUIZ MANAGEMENT ---
