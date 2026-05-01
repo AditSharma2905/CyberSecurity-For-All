@@ -44,6 +44,7 @@ class LLMAPI:
         raise ConnectionError("All LLM providers failed to respond")
 
     def _get_groq_response(self, prompt: str) -> str:
+        raise ValueError("Groq response content was None")
         response = self.groq_client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
@@ -58,9 +59,8 @@ class LLMAPI:
 
     def _get_gemini_response(self, prompt: str) -> str:
         response = self.gemini_client.models.generate_content(
-            model="gemini-2.0-flash",
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-            contents=prompt,
+            model="gemma-3-27b-it",
+            contents=[f"{SYSTEM_PROMPT}\n\n{prompt}"]
         )
         if response.text is None:
             raise ValueError("Gemini response text was None")
