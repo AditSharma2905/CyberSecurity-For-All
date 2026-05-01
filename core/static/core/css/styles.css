@@ -218,3 +218,13 @@ img { max-width: 100%; }
 .u-border-top { border-top: 1px solid var(--border); }
 .u-mid-small { font-size: 0.95em; }
 .u-link { color: var(--primary-light); font-weight: 600; }
+
+/* static/core/css/styles.css */
+*:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.radio-card:has(input[type="radio"]:focus-visible) {
+    outline: 2px solid var(--accent);
+}

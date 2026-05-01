@@ -18,7 +18,7 @@
 
     <div class="question-card fade-in mb-4">
         <h3>Live Leaderboard</h3>
-        <table id="leaderboard" class="leaderboard-table">
+        <table id="leaderboard" class="leaderboard-table" aria-live="polite">
             <thead>
                 <tr>
                     <th>Rank</th>
@@ -43,7 +43,7 @@
             <p class="question-card__text">{{ question.text }}</p>
 
             {% for answer in question.answers.all %}
-            <label class="radio-card" onclick="this.querySelector('input').checked=true; highlightSelected(this);">
+            <label class="radio-card">
                 <input type="radio" name="q_{{ question.id }}" value="{{ answer.id }}" required>
                 <span class="radio-card__text">{{ answer.text }}</span>
             </label>
@@ -70,9 +70,14 @@ function highlightSelected(label) {
     parent.querySelectorAll('.radio-card').forEach(l => l.classList.remove('radio-card--selected'));
     label.classList.add('radio-card--selected');
 }
+
+document.addEventListener('change', function(e) {
+    if (e.target.type === 'radio') {
+        highlightSelected(e.target.closest('.radio-card'));
+    }
+});
 </script>
 <script>
-/* 🔥 LIVE LEADERBOARD WEBSOCKET (ADDED ONLY) */
 
 const quizId = "{{ quiz.id }}";
 
