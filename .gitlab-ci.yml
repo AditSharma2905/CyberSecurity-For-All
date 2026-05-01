@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+deploy_vm:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client python3
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -H $VM_IP >> ~/.ssh/known_hosts
+  script:
+    - ssh user@$VM_IP "python3 ~/deploy.py"
+  only:
+    - main

@@ -7,15 +7,10 @@
 <div class="container">
     <!-- Hero -->
     <section class="hero">
-        <div class="hero__shield">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-        </div>
         <h1 class="hero__title">Learn Cyber Security.<br><span>Stay Safe Online.</span></h1>
         <p class="hero__desc">
-            An interactive platform designed for everyone — from young learners to seniors.
-            Build real skills through quizzes, AI chat, and breach checking tools.
+            A platform designed to build knowledge on the subject of cybersecurity.
+            Build skills through quizzes, AI chat, and breach checking tools.
         </p>
         <div class="hero__actions">
             <a href="{% url 'core:quiz_list' %}" class="btn btn--accent btn--lg">Start a Quiz</a>
@@ -39,7 +34,7 @@
                     </svg>
                 </div>
                 <h3 class="card__title">Interactive Quizzes</h3>
-                <p class="card__desc">Test your knowledge with curated quizzes on phishing, passwords, privacy, and more. Track your progress as you learn.</p>
+                <p class="card__desc">Test your knowledge with quizzes on phishing, passwords, privacy, and more. Track your progress.</p>
                 <span class="btn btn--sm btn--primary">Browse Quizzes →</span>
             </a>
 
@@ -51,7 +46,7 @@
                     </svg>
                 </div>
                 <h3 class="card__title">AI Chatbot</h3>
-                <p class="card__desc">Got a question about staying safe online? Ask our AI assistant — powered by Groq — and get clear, friendly answers.</p>
+                <p class="card__desc">Got a question? Ask our AI (powered by Groq) and get clear answers.</p>
                 <span class="btn btn--sm btn--primary">Chat Now →</span>
             </a>
 
@@ -63,7 +58,7 @@
                     </svg>
                 </div>
                 <h3 class="card__title">Breach Checker</h3>
-                <p class="card__desc">Check if your email has appeared in known data breaches using the Have I Been Pwned database. Stay informed and secure.</p>
+                <p class="card__desc">Check if your email has appeared in known data breaches using the Have I Been Pwned database.</p>
                 <span class="btn btn--sm btn--primary">Check Email →</span>
             </a>
         </div>
@@ -75,7 +70,7 @@
             <div class="cta-banner__content">
                 <span class="badge badge--purple mb-2">AI Powered</span>
                 <h3 class="card__title mt-2">Generate Custom Quizzes</h3>
-                <p class="card__desc mb-0">Enter any cyber security topic and our AI will instantly create a tailored quiz just for you.</p>
+                <p class="card__desc mb-0">Enter any cyber security topic and our AI will instantly create a quiz.</p>
             </div>
             <a href="{% url 'core:generate_quiz' %}" class="btn btn--accent btn--lg">Generate a Quiz</a>
         </div>
