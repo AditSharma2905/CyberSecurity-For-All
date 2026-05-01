@@ -10,7 +10,16 @@ load_dotenv(BASE_DIR / ".env")
 # --- SECURITY ---
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-teamplato-2026-change-in-production")
 DEBUG = True
-ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://com2042-plato.csee.surrey.ac.uk",
+]
+
+# Ensure these are also set correctly for production
+ALLOWED_HOSTS = [
+    "com2042-plato.csee.surrey.ac.uk",
+    "localhost",
+    "127.0.0.1",
+]
 
 # --- APP DEFINITION ---
 DJANGO_APPS = [
