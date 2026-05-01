@@ -22,7 +22,6 @@ class LLMAPI:
         self.providers = [self._get_groq_response, self._get_gemini_response]
 
     def _parse_json(self, text: str) -> dict:
-
         text = text.replace('```json', '').replace('```', '')
         
         start = text.find('{')
