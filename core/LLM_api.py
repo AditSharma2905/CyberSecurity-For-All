@@ -48,8 +48,7 @@ class LLMAPI:
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt},
-            ],
-            response_format={"type": "json_object"}
+            ]
         )
         content = response.choices[0].message.content
         if content is None:
@@ -59,8 +58,7 @@ class LLMAPI:
     def _get_gemini_response(self, prompt: str) -> str:
         response = self.gemini_client.models.generate_content(
             model="gemma-3-27b-it",
-            contents=[f"{SYSTEM_PROMPT}\n\n{prompt}"],
-            config=types.GenerateContentConfig(response_mime_type="application/json") # Added JSON mode
+            contents=[f"{SYSTEM_PROMPT}\n\n{prompt}"]
         )
         if response.text is None:
             raise ValueError("Gemini response text was None")
