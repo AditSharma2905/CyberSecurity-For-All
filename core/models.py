@@ -72,6 +72,65 @@ class QuizAnswer(models.Model):
 
 # --- SIGNALS ---
 
+def compute_universal_leaderboard():
+    """Return the all-time hall-of-fame as a list of dicts.
+
+    For each authenticated user, for each quiz they've attempted,
+    take their best (score * total_questions).  Sum those bests
+    per user.  Order by total_points descending.
+    """
+    from collections import defaultdict
+
+    from django.contrib.auth.models import User
+
+    attempts = (
+        QuizAttempt.objects
+        .filter(user__isnull=False)
+        .select_related("user")
+        .only("user", "quiz", "score", "total_questions")
+    )
+
+    # (user_id, quiz_id) -> best points
+    best_points = defaultdict(lambda: defaultdict(int))
+    user_ids = set()
+
+    for a in attempts:
+        points = a.score * a.total_questions
+        if points > best_points[a.user_id][a.quiz_id]:
+            best_points[a.user_id][a.quiz_id] = points
+        user_ids.add(a.user_id)
+
+    if not user_ids:
+        return []
+
+    # Compute totals and sort
+    totals = [
+        (uid, sum(best_points[uid].values()), len(best_points[uid]))
+        for uid in user_ids
+    ]
+    totals.sort(key=lambda t: t[1], reverse=True)
+
+    # Fetch user display info
+    user_map = {
+        u.id: u
+        for u in User.objects.filter(id__in=[t[0] for t in totals]).only(
+            "id", "username", "first_name", "last_name"
+        )
+    }
+
+    return [
+        {
+            "rank": rank,
+            "username": (
+                user_map[uid].get_full_name() or user_map[uid].username
+            ) if uid in user_map else "Unknown",
+            "total_points": total,
+            "quizzes_completed": quiz_count,
+        }
+        for rank, (uid, total, quiz_count) in enumerate(totals, start=1)
+    ]
+
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

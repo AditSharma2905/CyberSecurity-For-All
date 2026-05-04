@@ -18,5 +18,8 @@ urlpatterns = [
     path("generate-quiz/", views.generate_quiz, name="generate_quiz"),
     path("take-quiz/<int:quiz_id>/", views.take_quiz, name="take_quiz"),
     path("results/<int:quiz_id>/<int:attempt_id>/", views.quiz_results, name="quiz_results"),
-    path("leaderboard/<int:quiz_id>/", views.leaderboard, name="leaderboard"),
+    path("leaderboard/<int:quiz_id>/", views.leaderboard, name="quiz_leaderboard"),
+
+    # Universal Leaderboard
+    path("leaderboard/", views.universal_leaderboard, name="leaderboard"),
 ]

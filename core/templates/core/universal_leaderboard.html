@@ -1,0 +1,243 @@
+{% extends "core/base.html" %}
+
+{% block title %}Leaderboard – Hall of Fame{% endblock %}
+{% block nav_leaderboard %}navbar__link--active{% endblock %}
+
+{% block extra_css %}
+<style>
+  .lb-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+  .lb-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted, #888); padding: 6px 14px; border-radius: 999px; border: 1.5px solid currentColor; transition: color 0.3s, border-color 0.3s; }
+  .lb-status__dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .lb-status--live { color: #22c55e; }
+  .lb-status--closed { color: #f97316; }
+
+  @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .5; } }
+  .lb-status--live .lb-status__dot { animation: pulse-dot 1.4s ease-in-out infinite; }
+
+  .lb-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border, rgba(255,255,255,.08)); background: var(--surface, rgba(255,255,255,.04)); }
+  #lb-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  #lb-table th { padding: 14px 18px; text-align: left; font-size: 0.72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted, #888); border-bottom: 1px solid var(--border, rgba(255,255,255,.08)); white-space: nowrap; }
+  #lb-table td { padding: 14px 18px; border-bottom: 1px solid var(--border, rgba(255,255,255,.06)); color: var(--text-body, #ccc); white-space: nowrap; transition: background 0.25s; }
+
+  @keyframes row-flash { 0% { background: rgba(99,102,241,.30); } 100% { background: transparent; } }
+  .lb-row--flash { animation: row-flash .8s ease-out forwards; }
+
+  .lb-rank { font-weight: 700; font-size: 1.05rem; width: 36px; text-align: center; }
+  .lb-rank--1 { color: #fbbf24; }
+  .lb-rank--2 { color: #9ca3af; }
+  .lb-rank--3 { color: #d97706; }
+
+  .lb-points { font-weight: 700; font-size: 1.05rem; color: var(--text-heading, #fff); }
+
+  .lb-empty { padding: 48px 24px; text-align: center; color: var(--text-muted, #888); }
+  .lb-empty svg { margin-bottom: 12px; opacity: .4; }
+
+  .lb-title { margin-bottom: 4px; }
+  .lb-subtitle { margin: 0; }
+  .u-text-center { text-align: center; }
+  .u-text-right { text-align: right; }
+  .lb-empty-icon { display: block; margin: 0 auto 8px; }
+
+  .lb-load-more { display: flex; justify-content: center; padding: 20px 0 8px; }
+  .lb-load-more .btn { min-width: 140px; }
+
+  .lb-row--hidden { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container container--narrow page">
+
+  <div class="lb-header">
+    <div>
+      <h1 class="page__title lb-title">Leaderboard</h1>
+      <p class="page__subtitle lb-subtitle">All-Time Hall of Fame</p>
+    </div>
+
+    <span class="lb-status lb-status--closed" id="ws-status">
+      <span class="lb-status__dot"></span>
+      <span id="ws-status-text">Connecting…</span>
+    </span>
+  </div>
+
+  <div class="lb-table-wrap">
+    <table id="lb-table" aria-live="polite" aria-label="Universal leaderboard">
+      <thead>
+        <tr>
+          <th class="u-text-center">#</th>
+          <th>Player</th>
+          <th class="u-text-right">Total Points</th>
+          <th class="u-text-right">Quizzes</th>
+        </tr>
+      </thead>
+      <tbody id="lb-body">
+        {% if rows %}
+          {% for row in rows %}
+          <tr class="lb-row{% if forloop.counter > page_size %} lb-row--hidden{% endif %}"
+              data-rank="{{ row.rank }}">
+            <td class="lb-rank {% if row.rank == 1 %}lb-rank--1{% elif row.rank == 2 %}lb-rank--2{% elif row.rank == 3 %}lb-rank--3{% endif %}">
+              {% if row.rank == 1 %}1st{% elif row.rank == 2 %}2nd{% elif row.rank == 3 %}3rd{% else %}{{ row.rank }}{% endif %}
+            </td>
+            <td><strong>{{ row.username }}</strong></td>
+            <td class="u-text-right lb-points">{{ row.total_points }}</td>
+            <td class="u-text-right">{{ row.quizzes_completed }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="4" class="lb-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lb-empty-icon">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            No entries yet – complete some quizzes to appear!
+          </td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if rows|length > page_size %}
+  <div class="lb-load-more" id="lb-load-more-wrap">
+    <button class="btn btn--ghost" id="lb-load-more-btn">
+      Load More
+    </button>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const PAGE_SIZE = {{ page_size }};
+  const TOTAL_ROWS = {{ rows|length }};
+  const statusEl  = document.getElementById("ws-status");
+  const statusTxt = document.getElementById("ws-status-text");
+  const tbody     = document.getElementById("lb-body");
+  const loadMoreWrap = document.getElementById("lb-load-more-wrap");
+  const loadMoreBtn  = document.getElementById("lb-load-more-btn");
+
+  const MEDALS = ["1st", "2nd", "3rd"];
+  const RANK_CLASSES = ["lb-rank--1", "lb-rank--2", "lb-rank--3"];
+
+  let visibleCount = PAGE_SIZE;
+  let allRows = [];
+
+  /* ── Reveal rows up to visibleCount ─────────────────────────────── */
+  function applyVisibility() {
+    const rows = tbody.querySelectorAll("tr.lb-row");
+    rows.forEach(function (row, i) {
+      if (i < visibleCount) {
+        row.classList.remove("lb-row--hidden");
+      } else {
+        row.classList.add("lb-row--hidden");
+      }
+    });
+
+    if (loadMoreWrap) {
+      loadMoreWrap.style.display = visibleCount >= TOTAL_ROWS ? "none" : "flex";
+    }
+  }
+
+  function showMore() {
+    visibleCount = Math.min(visibleCount + PAGE_SIZE, TOTAL_ROWS);
+    applyVisibility();
+  }
+
+  /* ── Build / replace the table body from fresh data ─────────────── */
+  function renderRows(data) {
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="lb-empty">'
+        + 'No entries yet – complete some quizzes to appear!</td></tr>';
+      if (loadMoreWrap) loadMoreWrap.style.display = "none";
+      return;
+    }
+
+    const html = data.map(function (row) {
+      var rank = row.rank;
+      var rankCell;
+      if (rank <= 3) {
+        rankCell = '<td class="lb-rank ' + RANK_CLASSES[rank - 1] + '">' + MEDALS[rank - 1] + '</td>';
+      } else {
+        rankCell = '<td class="lb-rank">' + rank + '</td>';
+      }
+      return '<tr class="lb-row lb-row--hidden lb-row--flash" data-rank="' + rank + '">'
+        + rankCell
+        + '<td><strong>' + escHtml(row.username) + '</strong></td>'
+        + '<td class="u-text-right lb-points">' + row.total_points + '</td>'
+        + '<td class="u-text-right">' + row.quizzes_completed + '</td>'
+        + '</tr>';
+    }).join("");
+
+    tbody.innerHTML = html;
+    visibleCount = PAGE_SIZE;
+    applyVisibility();
+    if (loadMoreWrap) loadMoreWrap.style.display = data.length > PAGE_SIZE ? "flex" : "none";
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  /* ── Click handler ──────────────────────────────────────────────── */
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", showMore);
+  }
+
+  /* ── WebSocket ───────────────────────────────────────────────────── */
+  const protocol = location.protocol === "https:" ? "wss" : "ws";
+  const wsUrl    = protocol + "://" + location.host + "/ws/leaderboard/";
+
+  var ws, reconnectTimer;
+
+  function setStatus(state) {
+    statusEl.classList.remove("lb-status--live", "lb-status--closed");
+    if (state === "live") {
+      statusEl.classList.add("lb-status--live");
+      statusTxt.textContent = "Live";
+    } else {
+      statusEl.classList.add("lb-status--closed");
+      statusTxt.textContent = state === "connecting" ? "Connecting\u2026" : "Reconnecting\u2026";
+    }
+  }
+
+  function connect() {
+    setStatus("connecting");
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = function () {
+      setStatus("live");
+      clearTimeout(reconnectTimer);
+    };
+
+    ws.onmessage = function (evt) {
+      try {
+        var msg = JSON.parse(evt.data);
+        if (msg.type === "leaderboard_update") {
+          renderRows(msg.data);
+        }
+      } catch (e) {
+        console.warn("[Leaderboard] bad message", e);
+      }
+    };
+
+    ws.onclose = function () {
+      setStatus("reconnecting");
+      reconnectTimer = setTimeout(connect, 3000);
+    };
+
+    ws.onerror = function () {
+      ws.close();
+    };
+  }
+
+  connect();
+})();
+</script>
+{% endblock %}

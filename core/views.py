@@ -4,6 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -12,7 +13,7 @@ from django.views.generic.edit import CreateView
 from .forms import CustomSignupForm
 from .hibp_client import check_breaches
 from .LLM_api import LLMAPI
-from .models import Answer, Question, Quiz, QuizAnswer, QuizAttempt
+from .models import Answer, Question, Quiz, QuizAnswer, QuizAttempt, compute_universal_leaderboard
 
 # --- AUTH ---
 
@@ -51,6 +52,13 @@ def chatbot(request):
             answer = "An unexpected error occurred. Please try again later."
 
     return render(request, "core/chatbot.html", {"question": question, "answer": answer})
+
+def universal_leaderboard(request):
+    rows = compute_universal_leaderboard()
+    return render(request, "core/universal_leaderboard.html", {
+        "rows": rows,
+        "page_size": 20
+    })
 
 # --- QUIZ MANAGEMENT ---
 
@@ -100,6 +108,23 @@ def _process_quiz_submission(request, quiz):
     async_to_sync(channel_layer.group_send)(
         f"leaderboard_{quiz.id}", {"type": "leaderboard_update"}
     )
+
+    if request.user.is_authenticated:
+        current_points = attempt.score * attempt.total_questions
+        previous_best = (
+            QuizAttempt.objects
+            .filter(user=request.user, quiz=quiz)
+            .exclude(id=attempt.id)
+            .annotate(points=F("score") * F("total_questions"))
+            .order_by("-points")
+            .values_list("points", flat=True)
+            .first()
+        ) or 0
+
+        if current_points > previous_best:
+            async_to_sync(channel_layer.group_send)(
+                "leaderboard_universal", {"type": "leaderboard_update"}
+            )
 
     messages.success(request, f"You scored {score}/{attempt.total_questions}!")
     return redirect("core:quiz_results", quiz_id=quiz.id, attempt_id=attempt.id)
