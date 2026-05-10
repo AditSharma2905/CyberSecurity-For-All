@@ -49,6 +49,33 @@ class Answer(models.Model):
     def __str__(self):
         return f"{self.text} ({'✅' if self.is_correct else '❌'})"
 
+# --- ANALYTICS ---
+
+class AnalyticsEvent(models.Model):
+    EVENT_TYPES = [
+        ("page_visit", "Page Visit"),
+        ("quiz_complete", "Quiz Completed"),
+        ("quiz_generate", "Quiz Generated"),
+        ("chatbot_query", "Chatbot Query"),
+        ("breach_check", "Breach Check"),
+        ("signup", "User Signup"),
+    ]
+
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPES)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["event_type", "created_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.get_event_type_display()} - {self.created_at:%Y-%m-%d %H:%M}"
+
 # --- ATTEMPTS & RESULTS ---
 
 class QuizAttempt(models.Model):

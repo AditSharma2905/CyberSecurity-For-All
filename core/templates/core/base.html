@@ -30,6 +30,10 @@
                 <li><a href="{% url 'core:chatbot' %}" class="navbar__link {% block nav_chatbot %}{% endblock %}">Chatbot</a></li>
                 <li><a href="{% url 'core:breach_checker' %}" class="navbar__link {% block nav_breach %}{% endblock %}">Breach Checker</a></li>
 
+                {% if user.is_staff %}
+                    <li><a href="{% url 'core:analytics' %}" class="navbar__link {% block nav_analytics %}{% endblock %}">Analytics</a></li>
+                {% endif %}
+
                 {% if user.is_authenticated %}
                     <li><span class="navbar__link">User: {{ user.username }}</span></li>
                     <li>

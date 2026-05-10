@@ -22,4 +22,7 @@ urlpatterns = [
 
     # Universal Leaderboard
     path("leaderboard/", views.universal_leaderboard, name="leaderboard"),
+
+    # Analytics (staff only)
+    path("analytics/", views.analytics, name="analytics"),
 ]

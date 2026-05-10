@@ -1,0 +1,218 @@
+{% extends "core/base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block nav_analytics %}navbar__link--active{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; text-align: center; }
+    .stat-card__value { font-size: 2.2em; font-weight: 800; color: var(--text-heading); letter-spacing: -0.03em; }
+    .stat-card__label { font-size: 0.82em; color: var(--text-muted); margin-top: 4px; }
+    .stat-card--purple .stat-card__value { color: var(--primary-light); }
+    .stat-card--teal .stat-card__value { color: var(--accent); }
+    .stat-card--green .stat-card__value { color: var(--success); }
+
+    .analytics-table { width: 100%; border-collapse: collapse; }
+    .analytics-table th,
+    .analytics-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9em; }
+    .analytics-table th { color: var(--text-muted); font-weight: 600; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; }
+    .analytics-table td { color: var(--text); }
+    .analytics-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 160px; padding: 16px 0; }
+    .bar-chart__col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .bar-chart__bar { width: 100%; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--primary-light), var(--primary)); min-height: 4px; transition: height 0.4s ease; }
+    .bar-chart__label { font-size: 0.72em; color: var(--text-muted); white-space: nowrap; }
+    .bar-chart__count { font-size: 0.75em; color: var(--text-heading); font-weight: 600; }
+
+    .query-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.88em; color: var(--text); }
+    .query-item:last-child { border-bottom: none; }
+    .query-item__time { font-size: 0.78em; color: var(--text-muted); margin-top: 2px; }
+
+    @media (max-width: 700px) {
+        .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+        .stat-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container page">
+    <div class="page__header">
+        <p class="section__label">Admin</p>
+        <h1 class="page__title">Analytics Dashboard</h1>
+        <p class="page__subtitle">Server-side data gathering and platform usage insights.</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stat-grid">
+        <div class="stat-card stat-card--purple">
+            <div class="stat-card__value">{{ total_users }}</div>
+            <div class="stat-card__label">Registered Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__value">{{ type_counts.quiz_complete|default:"0" }}</div>
+            <div class="stat-card__label">Quizzes Completed</div>
+        </div>
+        <div class="stat-card stat-card--teal">
+            <div class="stat-card__value">{{ type_counts.chatbot_query|default:"0" }}</div>
+            <div class="stat-card__label">Chatbot Queries</div>
+        </div>
+        <div class="stat-card stat-card--green">
+            <div class="stat-card__value">{{ type_counts.breach_check|default:"0" }}</div>
+            <div class="stat-card__label">Breach Checks</div>
+        </div>
+    </div>
+
+    <div class="grid grid--2">
+        <!-- Daily Activity (Last 7 Days) -->
+        <div class="card">
+            <h2 class="card__title">Daily Activity (Last 7 Days)</h2>
+            <p class="card__desc" style="font-size:0.85em;">Total events per day across all features.</p>
+            {% if daily_activity %}
+            <div class="bar-chart">
+                {% for day in daily_activity %}
+                <div class="bar-chart__col">
+                    <div class="bar-chart__count">{{ day.count }}</div>
+                    <div class="bar-chart__bar" style="height: {% if day.count > 0 %}{{ day.count|floatformat:0 }}{% else %}4{% endif %}px; max-height: 120px;"></div>
+                    <div class="bar-chart__label">{{ day.date }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No activity recorded yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- This Week vs All Time -->
+        <div class="card">
+            <h2 class="card__title">This Week vs All Time</h2>
+            <p class="card__desc" style="font-size:0.85em;">Event counts for the last 7 days compared to totals.</p>
+            <table class="analytics-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>This Week</th>
+                        <th>All Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Page Visits</td>
+                        <td>{{ recent_type_counts.page_visit|default:"0" }}</td>
+                        <td>{{ type_counts.page_visit|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Quizzes Completed</td>
+                        <td>{{ recent_type_counts.quiz_complete|default:"0" }}</td>
+                        <td>{{ type_counts.quiz_complete|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Quizzes Generated</td>
+                        <td>{{ recent_type_counts.quiz_generate|default:"0" }}</td>
+                        <td>{{ type_counts.quiz_generate|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Chatbot Queries</td>
+                        <td>{{ recent_type_counts.chatbot_query|default:"0" }}</td>
+                        <td>{{ type_counts.chatbot_query|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Breach Checks</td>
+                        <td>{{ recent_type_counts.breach_check|default:"0" }}</td>
+                        <td>{{ type_counts.breach_check|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Signups</td>
+                        <td>{{ recent_type_counts.signup|default:"0" }}</td>
+                        <td>{{ type_counts.signup|default:"0" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="grid grid--2 mt-3">
+        <!-- Popular Quiz Topics -->
+        <div class="card">
+            <h2 class="card__title">Popular Quiz Topics</h2>
+            <p class="card__desc" style="font-size:0.85em;">Most attempted and generated quiz topics.</p>
+            {% if popular_topics %}
+            <table class="analytics-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Topic</th>
+                        <th>Attempts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic, count in popular_topics %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ topic }}</td>
+                        <td>{{ count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted mt-2">No quiz data yet.</p>
+            {% endif %}
+
+            {% if avg_score %}
+            <div class="mt-3" style="padding-top: 16px; border-top: 1px solid var(--border);">
+                <span class="text-muted" style="font-size:0.85em;">Average Quiz Score:</span>
+                <span style="font-weight: 700; color: {% if avg_score >= 70 %}var(--success){% else %}var(--warning){% endif %}; font-size: 1.1em; margin-left: 8px;">{{ avg_score }}%</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Chatbot Queries -->
+        <div class="card">
+            <h2 class="card__title">Recent Chatbot Queries</h2>
+            <p class="card__desc" style="font-size:0.85em;">The last 10 questions users asked the chatbot.</p>
+            {% if recent_queries %}
+                {% for event in recent_queries %}
+                <div class="query-item">
+                    <div>"{{ event.metadata.topic }}"</div>
+                    <div class="query-item__time">
+                        {% if event.user %}{{ event.user.username }}{% else %}Anonymous{% endif %}
+                        · {{ event.created_at|timesince }} ago
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="text-muted mt-2">No chatbot queries yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <h2 class="card__title">Platform Summary</h2>
+        <p class="card__desc" style="font-size:0.85em;">High-level platform health indicators.</p>
+        <table class="analytics-table">
+            <tbody>
+                <tr>
+                    <td>Total Events Recorded</td>
+                    <td style="font-weight: 600; color: var(--text-heading);">{{ total_events }}</td>
+                </tr>
+                <tr>
+                    <td>Registered Users</td>
+                    <td style="font-weight: 600; color: var(--text-heading);">{{ total_users }}</td>
+                </tr>
+                <tr>
+                    <td>Average Quiz Score</td>
+                    <td style="font-weight: 600; color: {% if avg_score >= 70 %}var(--success){% else %}var(--warning){% endif %};">{{ avg_score }}%</td>
+                </tr>
+                <tr>
+                    <td>Total Breach Checks</td>
+                    <td style="font-weight: 600; color: var(--text-heading);">{{ type_counts.breach_check|default:"0" }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

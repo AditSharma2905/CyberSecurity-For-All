@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Answer, Question, Quiz, QuizAnswer, QuizAttempt
+from .models import AnalyticsEvent, Answer, Question, Quiz, QuizAnswer, QuizAttempt
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
@@ -32,3 +32,10 @@ class QuizAttemptAdmin(admin.ModelAdmin):
 class QuizAnswerAdmin(admin.ModelAdmin):
     list_display = ["attempt", "question", "selected_answer"]
     list_filter = ["attempt__quiz"]
+
+@admin.register(AnalyticsEvent)
+class AnalyticsEventAdmin(admin.ModelAdmin):
+    list_display = ["event_type", "user", "ip_address", "created_at"]
+    list_filter = ["event_type", "created_at"]
+    search_fields = ["user__username", "ip_address"]
+    readonly_fields = ["created_at"]
